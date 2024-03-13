@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Multiplication</title>
+<style>
+  /* Styling for the images */
+  .multiplied-image {
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+
+<script>
+document.addEventListener('click', function(event) {
+  // Get the click coordinates
+  var x = event.clientX;
+  var y = event.clientY;
+
+  // Create a new image element
+  var img = document.createElement('img');
+  img.src = 'egg.jpg'; // Replace 'image.jpg' with your image file path
+  img.className = 'multiplied-image';
+
+  // Set the position of the image
+  img.style.left = (x - 25) + 'px'; // Adjust for image width
+  img.style.top = (y - 25) + 'px';  // Adjust for image height
+
+  // Append the image to the document body
+  document.body.appendChild(img);
+});
+</script>
+
+</body>
+</html>
