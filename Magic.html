@@ -15,21 +15,21 @@
 <body>
 
 <script>
-var isVisible = true; // Variable to track the visibility state
-
 document.addEventListener('click', function(event) {
-  if (isVisible) {
-    // If the image is visible, hide it
-    document.querySelectorAll('.multiplied-image').forEach(function(img) {
+  // Get the click coordinates
+  var x = event.clientX;
+  var y = event.clientY;
+
+  // Check if there are visible images
+  var visibleImages = document.querySelectorAll('.multiplied-image:not([style*="display: none"])');
+
+  if (visibleImages.length > 0) {
+    // If there are visible images, hide them
+    visibleImages.forEach(function(img) {
       img.style.display = 'none';
     });
   } else {
-    // If the image is hidden, show it
-    // Get the click coordinates
-    var x = event.clientX;
-    var y = event.clientY;
-
-    // Create a new image element
+    // If no images are visible, create a new image at the click coordinates
     var img = document.createElement('img');
     img.src = 'egg.jpg'; // Replace 'image.jpg' with your image file path
     img.className = 'multiplied-image';
@@ -41,9 +41,6 @@ document.addEventListener('click', function(event) {
     // Append the image to the document body
     document.body.appendChild(img);
   }
-
-  // Toggle the visibility state
-  isVisible = !isVisible;
 });
 </script>
 
