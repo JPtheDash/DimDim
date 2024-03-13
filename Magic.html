@@ -8,39 +8,33 @@
   /* Styling for the images */
   .multiplied-image {
     position: absolute;
-    display: none; /* Hide the image by default */
   }
 </style>
 </head>
 <body>
 
+<!-- Initial image -->
+<img id="mainImage" class="multiplied-image" src="image.jpg" alt="Main Image">
+
 <script>
-document.addEventListener('click', function(event) {
-  // Get the click coordinates
-  var x = event.clientX;
-  var y = event.clientY;
+var isVisible = true; // Variable to track the visibility state
+var mainImage = document.getElementById('mainImage');
 
-  // Check if there are visible images
-  var visibleImages = document.querySelectorAll('.multiplied-image:not([style*="display: none"])');
+// Hide the main image initially
+mainImage.style.display = 'none';
 
-  if (visibleImages.length > 0) {
-    // If there are visible images, hide them
-    visibleImages.forEach(function(img) {
-      img.style.display = 'none';
-    });
+// Toggle visibility on click
+document.addEventListener('click', function() {
+  if (isVisible) {
+    // If the image is visible, hide it
+    mainImage.style.display = 'none';
   } else {
-    // If no images are visible, create a new image at the click coordinates
-    var img = document.createElement('img');
-    img.src = 'egg.jpg'; // Replace 'image.jpg' with your image file path
-    img.className = 'multiplied-image';
-
-    // Set the position of the image
-    img.style.left = (x - 25) + 'px'; // Adjust for image width
-    img.style.top = (y - 25) + 'px';  // Adjust for image height
-
-    // Append the image to the document body
-    document.body.appendChild(img);
+    // If the image is hidden, show it
+    mainImage.style.display = 'block';
   }
+
+  // Toggle the visibility state
+  isVisible = !isVisible;
 });
 </script>
 
