@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egg to Omelette</title>
+<style>
+  /* Styling for the image */
+  #egg {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- Initially, the image of an egg -->
+<img id="egg" src="egg.jpg" alt="Egg" onclick="cookOmelette()">
+
+<script>
+function cookOmelette() {
+  // Get the image element
+  var eggImg = document.getElementById('egg');
+  
+  // Change the source to the omelette image
+  eggImg.src = "omelette.jpg";
+  
+  // Change the alt text
+  eggImg.alt = "Omelette";
+  
+  // Remove the onclick event to prevent further clicks
+  eggImg.removeAttribute('onclick');
+}
+</script>
+
+</body>
+</html>
