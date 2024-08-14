@@ -1,42 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image Toggle</title>
-<style>
-  /* Styling for the images */
-  .multiplied-image {
-    position: absolute;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WTF - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            text-align: center;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-
-<!-- Initial image -->
-<img id="mainImage" class="multiplied-image" src="egg.jpg" alt="Main Image">
-
-<script>
-var isVisible = true; // Variable to track the visibility state
-var mainImage = document.getElementById('mainImage');
-
-// Hide the main image initially
-mainImage.style.display = 'none';
-
-// Toggle visibility on click
-document.addEventListener('click', function() {
-  if (isVisible) {
-    // If the image is visible, hide it
-    mainImage.style.display = 'none';
-  } else {
-    // If the image is hidden, show it
-    mainImage.style.display = 'block';
-  }
-
-  // Toggle the visibility state
-  isVisible = !isVisible;
-});
-</script>
-
+    <div class="container">
+        <h1>WTF</h1>
+        <h2>What's The Future?</h2>
+        
+        <div class="section">
+            <a href="future.html">Set My Future - Only Future Date</a>
+            <a href="reality.html">Reality - Only Today's Date (Available After 6 PM)</a>
+            <a href="ai.html">Set My Future by AI</a>
+            <a href="anonymous.html">Set My Future by Anonymous</a>
+            <a href="amigos.html">Set My Future by Amigos</a>
+        </div>
+    </div>
 </body>
 </html>
