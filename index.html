@@ -3,41 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WTF - Home</title>
+    <title>WTF - What's The Future?</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: #333;
         }
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
         }
         h1, h2 {
             text-align: center;
-            color: #333;
+            color: #444;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 40px;
         }
         .section {
             margin-bottom: 20px;
         }
-        a, button {
+        button {
             display: block;
+            width: 100%;
             margin: 10px 0;
-            padding: 10px;
-            text-align: center;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
+            padding: 15px;
+            background-color: #ff7e5f;
+            color: #ffffff;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 18px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        a:hover, button:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #e76d4c;
         }
         .hidden {
             display: none;
@@ -47,14 +60,28 @@
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #555;
         }
         input[type="date"], select {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: border 0.3s ease;
+        }
+        input[type="date"]:focus, select:focus {
+            border-color: #ff7e5f;
+            outline: none;
+        }
+        .btn-submit {
+            background-color: #feb47b;
+        }
+        .btn-submit:hover {
+            background-color: #fd9062;
         }
     </style>
 </head>
@@ -66,9 +93,9 @@
         <div class="section">
             <button onclick="document.getElementById('set-future').classList.toggle('hidden');">Set My Future - Only Future Date</button>
             <button onclick="document.getElementById('reality').classList.toggle('hidden');">Reality - Only Today's Date (Available After 6 PM)</button>
-            <button onclick="alert('Set My Future by AI - Feature coming soon!')">Set My Future by AI</button>
-            <button onclick="alert('Set My Future by Anonymous - Feature coming soon!')">Set My Future by Anonymous</button>
-            <button onclick="alert('Set My Future by Amigos - Feature coming soon!')">Set My Future by Amigos</button>
+            <button class="btn-disabled">Set My Future by AI</button>
+            <button class="btn-disabled">Set My Future by Anonymous</button>
+            <button class="btn-disabled">Set My Future by Amigos</button>
         </div>
         
         <div id="set-future" class="section hidden">
@@ -85,7 +112,7 @@
                     <option value="average">Average</option>
                 </select>
             </div>
-            <button>Submit Prediction</button>
+            <button class="btn-submit">Submit Prediction</button>
         </div>
         
         <div id="reality" class="section hidden">
@@ -110,7 +137,7 @@
                     <option value="average">Average</option>
                 </select>
             </div>
-            <button>Submit Reality</button>
+            <button class="btn-submit">Submit Reality</button>
         </div>
     </div>
 </body>
