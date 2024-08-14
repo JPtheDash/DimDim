@@ -17,14 +17,14 @@
             padding: 20px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
         }
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #333;
         }
         .section {
             margin-bottom: 20px;
         }
-        a {
+        a, button {
             display: block;
             margin: 10px 0;
             padding: 10px;
@@ -32,15 +32,29 @@
             background-color: #007BFF;
             color: white;
             text-decoration: none;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
         }
-        a:hover {
+        a:hover, button:hover {
             background-color: #0056b3;
         }
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
+        .hidden {
+            display: none;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="date"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -50,11 +64,53 @@
         <h2>What's The Future?</h2>
         
         <div class="section">
-            <a href="future.html">Set My Future - Only Future Date</a>
-            <a href="reality.html">Reality - Only Today's Date (Available After 6 PM)</a>
-            <a href="ai.html">Set My Future by AI</a>
-            <a href="anonymous.html">Set My Future by Anonymous</a>
-            <a href="amigos.html">Set My Future by Amigos</a>
+            <button onclick="document.getElementById('set-future').classList.toggle('hidden');">Set My Future - Only Future Date</button>
+            <button onclick="document.getElementById('reality').classList.toggle('hidden');">Reality - Only Today's Date (Available After 6 PM)</button>
+            <button onclick="alert('Set My Future by AI - Feature coming soon!')">Set My Future by AI</button>
+            <button onclick="alert('Set My Future by Anonymous - Feature coming soon!')">Set My Future by Anonymous</button>
+            <button onclick="alert('Set My Future by Amigos - Feature coming soon!')">Set My Future by Amigos</button>
+        </div>
+        
+        <div id="set-future" class="section hidden">
+            <h3>Set My Future</h3>
+            <div class="input-group">
+                <label for="future-date">Choose a future date:</label>
+                <input type="date" id="future-date" name="future-date" min="" required>
+            </div>
+            <div class="input-group">
+                <label for="prediction">Your Prediction:</label>
+                <select id="prediction" name="prediction">
+                    <option value="good">Good</option>
+                    <option value="bad">Bad</option>
+                    <option value="average">Average</option>
+                </select>
+            </div>
+            <button>Submit Prediction</button>
+        </div>
+        
+        <div id="reality" class="section hidden">
+            <h3>Reality</h3>
+            <div class="input-group">
+                <label for="reality-date">Today's Date:</label>
+                <input type="date" id="reality-date" name="reality-date" value="" readonly>
+            </div>
+            <div class="input-group">
+                <label for="predicted">Predicted Outcome:</label>
+                <select id="predicted" name="predicted" disabled>
+                    <option value="good">Good</option>
+                    <option value="bad">Bad</option>
+                    <option value="average">Average</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="happened">What Actually Happened:</label>
+                <select id="happened" name="happened">
+                    <option value="good">Good</option>
+                    <option value="bad">Bad</option>
+                    <option value="average">Average</option>
+                </select>
+            </div>
+            <button>Submit Reality</button>
         </div>
     </div>
 </body>
