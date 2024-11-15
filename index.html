@@ -3,142 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WTF - What's The Future?</title>
+    <title>Come Talk</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f3f3f3;
             color: #333;
         }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
+        header {
             text-align: center;
-            color: #444;
-            font-weight: 700;
+            padding: 10px;
+            background-color: #333;
+            color: white;
         }
-        h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
+        main {
+            display: flex;
+            flex: 1;
         }
-        h2 {
-            font-size: 24px;
-            margin-bottom: 40px;
+        .side {
+            width: 50%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .section {
-            margin-bottom: 20px;
+        .profile {
+            background-color: #e0f7fa;
         }
-        button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 15px;
-            background-color: #ff7e5f;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
+        .black-window {
+            background-color: #000;
+            color: #fff;
+        }
+        .phone-icon {
+            font-size: 40px;
+            color: #00796b;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #e76d4c;
-        }
-        .hidden {
-            display: none;
-        }
-        .input-group {
             margin: 20px 0;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
-            color: #555;
+        .phone-icon:hover {
+            color: #004d40;
         }
-        input[type="date"], select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            transition: border 0.3s ease;
+        .topics {
+            margin-top: 20px;
         }
-        input[type="date"]:focus, select:focus {
-            border-color: #ff7e5f;
-            outline: none;
-        }
-        .btn-submit {
-            background-color: #feb47b;
-        }
-        .btn-submit:hover {
-            background-color: #fd9062;
+        .policy {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>WTF</h1>
-        <h2>What's The Future?</h2>
-        
-        <div class="section">
-            <button onclick="document.getElementById('set-future').classList.toggle('hidden');">Set My Future - Only Future Date</button>
-            <button onclick="document.getElementById('reality').classList.toggle('hidden');">Reality - Only Today's Date (Available After 6 PM)</button>
-            <button class="btn-disabled">Set My Future by AI</button>
-            <button class="btn-disabled">Set My Future by Anonymous</button>
-            <button class="btn-disabled">Set My Future by Amigos</button>
+    <header>
+        <h1>Come Talk</h1>
+    </header>
+    <main>
+        <!-- Profile and Interests Section -->
+        <div class="side profile">
+            <h2>Your Profile</h2>
+            <p>Share your interests:</p>
+            <ul>
+                <li>Music</li>
+                <li>Movies</li>
+                <li>Tech</li>
+                <li>Books</li>
+                <li>Travel</li>
+            </ul>
         </div>
-        
-        <div id="set-future" class="section hidden">
-            <h3>Set My Future</h3>
-            <div class="input-group">
-                <label for="future-date">Choose a future date:</label>
-                <input type="date" id="future-date" name="future-date" min="" required>
-            </div>
-            <div class="input-group">
-                <label for="prediction">Your Prediction:</label>
-                <select id="prediction" name="prediction">
-                    <option value="good">Good</option>
-                    <option value="bad">Bad</option>
-                    <option value="average">Average</option>
+        <!-- Matching Black Window Section -->
+        <div class="side black-window">
+            <h2>Find Someone to Talk To</h2>
+            <p>Choose a topic and click dial!</p>
+            <div class="topics">
+                <select>
+                    <option value="Music">Music</option>
+                    <option value="Movies">Movies</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Books">Books</option>
+                    <option value="Travel">Travel</option>
                 </select>
+                <div class="phone-icon" onclick="alert('Dialing...')">&#9742;</div>
             </div>
-            <button class="btn-submit">Submit Prediction</button>
         </div>
-        
-        <div id="reality" class="section hidden">
-            <h3>Reality</h3>
-            <div class="input-group">
-                <label for="reality-date">Today's Date:</label>
-                <input type="date" id="reality-date" name="reality-date" value="" readonly>
-            </div>
-            <div class="input-group">
-                <label for="predicted">Predicted Outcome:</label>
-                <select id="predicted" name="predicted" disabled>
-                    <option value="good">Good</option>
-                    <option value="bad">Bad</option>
-                    <option value="average">Average</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="happened">What Actually Happened:</label>
-                <select id="happened" name="happened">
-                    <option value="good">Good</option>
-                    <option value="bad">Bad</option>
-                    <option value="average">Average</option>
-                </select>
-            </div>
-            <button class="btn-submit">Submit Reality</button>
-        </div>
-    </div>
+    </main>
+    <footer class="policy">
+        <p>Policies: Don't expose your identity. Talk to the topic.</p>
+    </footer>
 </body>
 </html>
