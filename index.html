@@ -8,11 +8,11 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #87CEEB; /* Light sky blue */
+            background-color: #87CEEB;
         }
         canvas {
             display: block;
-            background: linear-gradient(#87CEEB, #228B22); /* Sky to green grass */
+            background: linear-gradient(#87CEEB, #228B22); /* Sky to grass */
         }
         #startButton {
             position: absolute;
@@ -47,39 +47,35 @@
     canvas.height = window.innerHeight;
 
     // Game variables
-    let ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 2, dy: 4 };
-    let bat = { x: canvas.width / 2 - 50, y: canvas.height - 100, width: 120, height: 10 };
+    let ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 3, dy: 4 };
+    let bat = { x: canvas.width / 2 - 50, y: canvas.height - 120, width: 120, height: 10, swinging: false };
     let score = 0;
-    let gameOver = false;
-
-    // Flag to start/restart the game
+    let ballsRemaining = 6; // 6 balls in one over
     let isGameRunning = false;
 
     // Stickman
     function drawStickman(x, y) {
-        ctx.beginPath();
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+
         // Head
-        ctx.arc(x, y - 30, 15, 0, Math.PI * 2);
-        ctx.fillStyle = "#000";
-        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y - 30, 10, 0, Math.PI * 2);
+        ctx.stroke();
 
         // Body
-        ctx.moveTo(x, y - 15);
-        ctx.lineTo(x, y + 20);
+        ctx.moveTo(x, y - 20);
+        ctx.lineTo(x, y);
 
         // Arms
-        ctx.moveTo(x - 20, y - 10);
-        ctx.lineTo(x + 20, y - 10);
-
-        // Bat
-        ctx.moveTo(x + 20, y - 10);
-        ctx.lineTo(x + 50, y - 30);
+        ctx.moveTo(x - 15, y - 15);
+        ctx.lineTo(x + 15, y - 15);
 
         // Legs
-        ctx.moveTo(x, y + 20);
-        ctx.lineTo(x - 10, y + 50);
-        ctx.moveTo(x, y + 20);
-        ctx.lineTo(x + 10, y + 50);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 10, y + 20);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 10, y + 20);
 
         ctx.stroke();
     }
@@ -95,26 +91,42 @@
 
     // Draw bat
     function drawBat() {
-        ctx.fillStyle = "#8B4513"; // Brown color for the bat
+        ctx.fillStyle = "#8B4513";
         ctx.fillRect(bat.x, bat.y, bat.width, bat.height);
+
+        // Swing effect
+        if (bat.swinging) {
+            ctx.fillStyle = "#FFD700"; // Golden bat effect
+            ctx.fillRect(bat.x + bat.width, bat.y - 10, 10, 30);
+        }
     }
 
-    // Display score
-    function displayScore() {
+    // Display score and balls remaining
+    function displayStats() {
         ctx.fillStyle = "white";
         ctx.font = "20px Arial";
-        ctx.fillText("Score: " + score, 20, 40);
+        ctx.fillText("Score: " + score, 20, 30);
+        ctx.fillText("Balls Remaining: " + ballsRemaining, 20, 60);
     }
 
     // Game over screen
     function showGameOver() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
         ctx.fillStyle = "white";
         ctx.font = "30px Arial";
-        ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2 - 20);
-        ctx.fillText("Score: " + score, canvas.width / 2 - 60, canvas.height / 2 + 20);
+        ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2 - 40);
+        ctx.fillText("Final Score: " + score, canvas.width / 2 - 100, canvas.height / 2);
+        ctx.fillText("Click to Restart", canvas.width / 2 - 100, canvas.height / 2 + 40);
+
         startButton.style.display = "block";
+    }
+
+    // Handle bat swing
+    function swingBat() {
+        bat.swinging = true;
+        setTimeout(() => bat.swinging = false, 200); // Swing lasts 200ms
     }
 
     // Handle bat movement
@@ -122,6 +134,12 @@
         const rect = canvas.getBoundingClientRect();
         bat.x = event.clientX - rect.left - bat.width / 2;
     });
+
+    // Swing the bat on spacebar or tap
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space') swingBat();
+    });
+    canvas.addEventListener('click', swingBat);
 
     // Game loop
     function gameLoop() {
@@ -132,9 +150,9 @@
 
         // Draw elements
         drawBall();
-        drawStickman(bat.x + bat.width / 2, bat.y);
+        drawStickman(bat.x + bat.width / 2, bat.y + 20);
         drawBat();
-        displayScore();
+        displayStats();
 
         // Move ball
         ball.x += ball.dx;
@@ -148,7 +166,8 @@
         if (
             ball.x > bat.x &&
             ball.x < bat.x + bat.width &&
-            ball.y + ball.radius > bat.y
+            ball.y + ball.radius > bat.y &&
+            bat.swinging
         ) {
             ball.dy *= -1;
             score++;
@@ -156,9 +175,13 @@
 
         // Ball hitting the ground
         if (ball.y - ball.radius > canvas.height) {
-            isGameRunning = false;
-            gameOver = true;
-            showGameOver();
+            ballsRemaining--;
+            resetBall();
+
+            if (ballsRemaining === 0) {
+                isGameRunning = false;
+                showGameOver();
+            }
         }
 
         if (isGameRunning) {
@@ -166,12 +189,20 @@
         }
     }
 
+    // Reset ball position
+    function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = 50;
+        ball.dx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
+        ball.dy = 4 + Math.random() * 2;
+    }
+
     // Start/restart the game
     function startGame() {
         score = 0;
-        gameOver = false;
+        ballsRemaining = 6;
         isGameRunning = true;
-        ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 2 + Math.random() * 2, dy: 4 + Math.random() * 2 };
+        resetBall();
         startButton.style.display = "none";
         gameLoop();
     }
