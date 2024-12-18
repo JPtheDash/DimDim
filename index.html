@@ -12,56 +12,45 @@
         }
         canvas {
             display: block;
-            background: linear-gradient(#87CEEB, #228B22); /* Sky to green grass */
-        }
-        #startButton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 15px 30px;
-            background-color: #FF4500;
-            color: white;
-            font-size: 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: none;
-        }
-        #startButton:hover {
-            background-color: #e03e00;
+            background: linear-gradient(#87CEEB, #228B22); /* Sky to grass */
         }
     </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
-<button id="startButton">Start Game</button>
-
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const startButton = document.getElementById('startButton');
 
+    // Canvas dimensions
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     // Game variables
     let ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 3, dy: 4 };
-    let bat = { x: canvas.width / 2 - 20, y: canvas.height - 100, swinging: false };
+    let bat = { x: canvas.width / 2, y: canvas.height - 100, angle: Math.PI, swing: false };
     let score = 0;
     let ballsRemaining = 6; // 6 balls per over
-    let isGameRunning = false;
+    let isGameRunning = true;
 
-    const field = {
-        width: canvas.width,
-        height: canvas.height,
-        zones: [
-            { x: canvas.width / 4, y: canvas.height / 2, width: canvas.width / 2, height: canvas.height / 4, type: "4", color: "blue" },
-            { x: canvas.width / 3, y: canvas.height / 4, width: canvas.width / 3, height: canvas.height / 4, type: "6", color: "green" },
-        ]
-    };
+    // Field zones for 4 and 6
+    const zones = [
+        { x: canvas.width / 4, y: canvas.height / 2, width: canvas.width / 2, height: canvas.height / 4, score: 4, color: "blue" },
+        { x: canvas.width / 3, y: canvas.height / 4, width: canvas.width / 3, height: canvas.height / 4, score: 6, color: "green" }
+    ];
 
-    // Stickman
+    // Draw zones
+    function drawZones() {
+        zones.forEach(zone => {
+            ctx.fillStyle = zone.color;
+            ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText(zone.score, zone.x + zone.width / 2 - 10, zone.y + zone.height / 2 + 10);
+        });
+    }
+
+    // Draw stickman
     function drawStickman(x, y) {
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
@@ -102,23 +91,14 @@
         ctx.strokeStyle = "#8B4513";
         ctx.lineWidth = 5;
 
-        // Bat swinging arc
-        ctx.beginPath();
-        const batAngle = bat.swinging ? Math.PI / 3 : Math.PI; // Adjust angle during swing
-        ctx.moveTo(bat.x, bat.y);
-        ctx.lineTo(bat.x + Math.cos(batAngle) * 40, bat.y - Math.sin(batAngle) * 40);
-        ctx.stroke();
-    }
+        // Calculate bat position during swing
+        const batEndX = bat.x + Math.cos(bat.angle) * 40;
+        const batEndY = bat.y - Math.sin(bat.angle) * 40;
 
-    // Draw field zones
-    function drawZones() {
-        field.zones.forEach(zone => {
-            ctx.fillStyle = zone.color;
-            ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
-            ctx.fillStyle = "white";
-            ctx.font = "20px Arial";
-            ctx.fillText(zone.type, zone.x + zone.width / 2 - 10, zone.y + zone.height / 2 + 10);
-        });
+        ctx.beginPath();
+        ctx.moveTo(bat.x, bat.y);
+        ctx.lineTo(batEndX, batEndY);
+        ctx.stroke();
     }
 
     // Display score and balls remaining
@@ -129,97 +109,21 @@
         ctx.fillText("Balls Remaining: " + ballsRemaining, 20, 60);
     }
 
-    // Game over screen
-    function showGameOver() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "white";
-        ctx.font = "30px Arial";
-        ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2 - 40);
-        ctx.fillText("Final Score: " + score, canvas.width / 2 - 100, canvas.height / 2);
-        ctx.fillText("Click to Restart", canvas.width / 2 - 100, canvas.height / 2 + 40);
-
-        startButton.style.display = "block";
-    }
-
-    // Handle bat swing
+    // Swing bat
     function swingBat() {
-        bat.swinging = true;
-        setTimeout(() => bat.swinging = false, 200); // Swing lasts 200ms
-    }
+        if (!bat.swing) {
+            bat.swing = true;
+            let swingDirection = -0.04; // Swing speed
 
-    // Handle bat movement
-    document.addEventListener('mousemove', (event) => {
-        const rect = canvas.getBoundingClientRect();
-        bat.x = event.clientX - rect.left - 20; // Center the bat
-    });
+            const swingInterval = setInterval(() => {
+                bat.angle += swingDirection;
 
-    // Swing the bat on spacebar or tap
-    document.addEventListener('keydown', (event) => {
-        if (event.code === 'Space') swingBat();
-    });
-    canvas.addEventListener('click', swingBat);
-
-    // Game loop
-    function gameLoop() {
-        if (!isGameRunning) return;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw elements
-        drawZones();
-        drawBall();
-        drawStickman(bat.x, bat.y + 50);
-        drawBat();
-        displayStats();
-
-        // Move ball
-        ball.x += ball.dx;
-        ball.y += ball.dy;
-
-        // Ball collisions
-        if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) ball.dx *= -1;
-        if (ball.y - ball.radius < 0) ball.dy *= -1;
-
-        // Ball hitting the bat
-        if (
-            ball.x > bat.x &&
-            ball.x < bat.x + 40 &&
-            ball.y + ball.radius > bat.y &&
-            bat.swinging
-        ) {
-            ball.dy = -Math.abs(ball.dy); // Bounce upwards
-            ball.dx *= 1.2; // Speed up ball
-        }
-
-        // Ball hitting zones
-        field.zones.forEach(zone => {
-            if (
-                ball.x > zone.x &&
-                ball.x < zone.x + zone.width &&
-                ball.y > zone.y &&
-                ball.y < zone.y + zone.height
-            ) {
-                score += zone.type === "4" ? 4 : 6;
-                resetBall();
-            }
-        });
-
-        // Ball hitting the ground
-        if (ball.y - ball.radius > canvas.height) {
-            ballsRemaining--;
-            resetBall();
-
-            if (ballsRemaining === 0) {
-                isGameRunning = false;
-                showGameOver();
-            }
-        }
-
-        if (isGameRunning) {
-            requestAnimationFrame(gameLoop);
+                if (bat.angle <= Math.PI - Math.PI / 6) swingDirection = 0.04; // Reverse direction
+                if (bat.angle >= Math.PI + Math.PI / 6) {
+                    bat.swing = false;
+                    clearInterval(swingInterval);
+                }
+            }, 10);
         }
     }
 
@@ -231,21 +135,81 @@
         ball.dy = 4 + Math.random() * 2;
     }
 
-    // Start/restart the game
-    function startGame() {
-        score = 0;
-        ballsRemaining = 6;
-        isGameRunning = true;
-        resetBall();
-        startButton.style.display = "none";
-        gameLoop();
+    // Game loop
+    function gameLoop() {
+        if (!isGameRunning) return;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw game elements
+        drawZones();
+        drawBall();
+        drawStickman(bat.x, bat.y + 50);
+        drawBat();
+        displayStats();
+
+        // Ball movement
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+
+        // Ball collisions
+        if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) ball.dx *= -1;
+        if (ball.y - ball.radius < 0) ball.dy *= -1;
+
+        // Check for bat collision
+        const batEndX = bat.x + Math.cos(bat.angle) * 40;
+        const batEndY = bat.y - Math.sin(bat.angle) * 40;
+
+        const dist = Math.sqrt((ball.x - batEndX) ** 2 + (ball.y - batEndY) ** 2);
+        if (dist < ball.radius + 5 && bat.swing) {
+            ball.dy = -Math.abs(ball.dy); // Reflect ball
+            ball.dx *= 1.2; // Speed up ball
+        }
+
+        // Check for scoring zones
+        zones.forEach(zone => {
+            if (
+                ball.x > zone.x &&
+                ball.x < zone.x + zone.width &&
+                ball.y > zone.y &&
+                ball.y < zone.y + zone.height
+            ) {
+                score += zone.score;
+                resetBall();
+            }
+        });
+
+        // Check if ball hits ground
+        if (ball.y - ball.radius > canvas.height) {
+            ballsRemaining--;
+            resetBall();
+
+            if (ballsRemaining === 0) {
+                isGameRunning = false;
+                alert("Game Over! Final Score: " + score);
+                return;
+            }
+        }
+
+        requestAnimationFrame(gameLoop);
     }
 
-    // Event listener for the start button
-    startButton.addEventListener('click', startGame);
+    // Mouse movement to position bat
+    document.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        bat.x = event.clientX - rect.left;
+    });
 
-    // Show the start button initially
-    startButton.style.display = "block";
+    // Click or spacebar to swing bat
+    canvas.addEventListener('click', swingBat);
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space') swingBat();
+    });
+
+    // Start game
+    resetBall();
+    gameLoop();
 </script>
 </body>
 </html>
