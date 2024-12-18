@@ -8,19 +8,39 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #b2d8d8;
+            background-color: #87CEEB; /* Light sky blue */
         }
         canvas {
             display: block;
+            background: linear-gradient(#87CEEB, #228B22); /* Sky to green grass */
+        }
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            background-color: #FF4500;
+            color: white;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+        #startButton:hover {
+            background-color: #e03e00;
         }
     </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
+<button id="startButton">Start Game</button>
 
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    const startButton = document.getElementById('startButton');
 
     // Set canvas size
     canvas.width = window.innerWidth;
@@ -28,35 +48,38 @@
 
     // Game variables
     let ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 2, dy: 4 };
-    let bat = { x: canvas.width / 2 - 50, y: canvas.height - 100, width: 100, height: 10 };
+    let bat = { x: canvas.width / 2 - 50, y: canvas.height - 100, width: 120, height: 10 };
     let score = 0;
     let gameOver = false;
+
+    // Flag to start/restart the game
+    let isGameRunning = false;
 
     // Stickman
     function drawStickman(x, y) {
         ctx.beginPath();
         // Head
-        ctx.arc(x, y - 30, 10, 0, Math.PI * 2);
+        ctx.arc(x, y - 30, 15, 0, Math.PI * 2);
         ctx.fillStyle = "#000";
         ctx.fill();
 
         // Body
-        ctx.moveTo(x, y - 20);
-        ctx.lineTo(x, y);
+        ctx.moveTo(x, y - 15);
+        ctx.lineTo(x, y + 20);
 
         // Arms
-        ctx.moveTo(x - 15, y - 15);
-        ctx.lineTo(x + 15, y - 15);
+        ctx.moveTo(x - 20, y - 10);
+        ctx.lineTo(x + 20, y - 10);
 
         // Bat
-        ctx.moveTo(x + 15, y - 15);
-        ctx.lineTo(x + 35, y - 30);
+        ctx.moveTo(x + 20, y - 10);
+        ctx.lineTo(x + 50, y - 30);
 
         // Legs
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - 10, y + 20);
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + 10, y + 20);
+        ctx.moveTo(x, y + 20);
+        ctx.lineTo(x - 10, y + 50);
+        ctx.moveTo(x, y + 20);
+        ctx.lineTo(x + 10, y + 50);
 
         ctx.stroke();
     }
@@ -72,8 +95,26 @@
 
     // Draw bat
     function drawBat() {
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = "#8B4513"; // Brown color for the bat
         ctx.fillRect(bat.x, bat.y, bat.width, bat.height);
+    }
+
+    // Display score
+    function displayScore() {
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+        ctx.fillText("Score: " + score, 20, 40);
+    }
+
+    // Game over screen
+    function showGameOver() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "30px Arial";
+        ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2 - 20);
+        ctx.fillText("Score: " + score, canvas.width / 2 - 60, canvas.height / 2 + 20);
+        startButton.style.display = "block";
     }
 
     // Handle bat movement
@@ -84,12 +125,7 @@
 
     // Game loop
     function gameLoop() {
-        if (gameOver) {
-            ctx.fillStyle = "red";
-            ctx.font = "30px Arial";
-            ctx.fillText("Game Over! Score: " + score, canvas.width / 2 - 150, canvas.height / 2);
-            return;
-        }
+        if (!isGameRunning) return;
 
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -98,6 +134,7 @@
         drawBall();
         drawStickman(bat.x + bat.width / 2, bat.y);
         drawBat();
+        displayScore();
 
         // Move ball
         ball.x += ball.dx;
@@ -119,19 +156,31 @@
 
         // Ball hitting the ground
         if (ball.y - ball.radius > canvas.height) {
+            isGameRunning = false;
             gameOver = true;
+            showGameOver();
         }
 
-        // Display score
-        ctx.fillStyle = "black";
-        ctx.font = "20px Arial";
-        ctx.fillText("Score: " + score, 10, 30);
-
-        requestAnimationFrame(gameLoop);
+        if (isGameRunning) {
+            requestAnimationFrame(gameLoop);
+        }
     }
 
-    // Start the game
-    gameLoop();
+    // Start/restart the game
+    function startGame() {
+        score = 0;
+        gameOver = false;
+        isGameRunning = true;
+        ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 2 + Math.random() * 2, dy: 4 + Math.random() * 2 };
+        startButton.style.display = "none";
+        gameLoop();
+    }
+
+    // Event listener for the start button
+    startButton.addEventListener('click', startGame);
+
+    // Show the start button initially
+    startButton.style.display = "block";
 </script>
 </body>
 </html>
