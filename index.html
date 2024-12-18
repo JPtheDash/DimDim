@@ -12,7 +12,7 @@
         }
         canvas {
             display: block;
-            background: linear-gradient(#87CEEB, #228B22); /* Sky to grass */
+            background: linear-gradient(#87CEEB, #228B22); /* Sky to green grass */
         }
         #startButton {
             position: absolute;
@@ -42,16 +42,24 @@
     const ctx = canvas.getContext('2d');
     const startButton = document.getElementById('startButton');
 
-    // Set canvas size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     // Game variables
     let ball = { x: canvas.width / 2, y: 50, radius: 10, dx: 3, dy: 4 };
-    let bat = { x: canvas.width / 2 - 50, y: canvas.height - 120, width: 120, height: 10, swinging: false };
+    let bat = { x: canvas.width / 2 - 20, y: canvas.height - 100, swinging: false };
     let score = 0;
-    let ballsRemaining = 6; // 6 balls in one over
+    let ballsRemaining = 6; // 6 balls per over
     let isGameRunning = false;
+
+    const field = {
+        width: canvas.width,
+        height: canvas.height,
+        zones: [
+            { x: canvas.width / 4, y: canvas.height / 2, width: canvas.width / 2, height: canvas.height / 4, type: "4", color: "blue" },
+            { x: canvas.width / 3, y: canvas.height / 4, width: canvas.width / 3, height: canvas.height / 4, type: "6", color: "green" },
+        ]
+    };
 
     // Stickman
     function drawStickman(x, y) {
@@ -91,14 +99,26 @@
 
     // Draw bat
     function drawBat() {
-        ctx.fillStyle = "#8B4513";
-        ctx.fillRect(bat.x, bat.y, bat.width, bat.height);
+        ctx.strokeStyle = "#8B4513";
+        ctx.lineWidth = 5;
 
-        // Swing effect
-        if (bat.swinging) {
-            ctx.fillStyle = "#FFD700"; // Golden bat effect
-            ctx.fillRect(bat.x + bat.width, bat.y - 10, 10, 30);
-        }
+        // Bat swinging arc
+        ctx.beginPath();
+        const batAngle = bat.swinging ? Math.PI / 3 : Math.PI; // Adjust angle during swing
+        ctx.moveTo(bat.x, bat.y);
+        ctx.lineTo(bat.x + Math.cos(batAngle) * 40, bat.y - Math.sin(batAngle) * 40);
+        ctx.stroke();
+    }
+
+    // Draw field zones
+    function drawZones() {
+        field.zones.forEach(zone => {
+            ctx.fillStyle = zone.color;
+            ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText(zone.type, zone.x + zone.width / 2 - 10, zone.y + zone.height / 2 + 10);
+        });
     }
 
     // Display score and balls remaining
@@ -132,7 +152,7 @@
     // Handle bat movement
     document.addEventListener('mousemove', (event) => {
         const rect = canvas.getBoundingClientRect();
-        bat.x = event.clientX - rect.left - bat.width / 2;
+        bat.x = event.clientX - rect.left - 20; // Center the bat
     });
 
     // Swing the bat on spacebar or tap
@@ -149,8 +169,9 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw elements
+        drawZones();
         drawBall();
-        drawStickman(bat.x + bat.width / 2, bat.y + 20);
+        drawStickman(bat.x, bat.y + 50);
         drawBat();
         displayStats();
 
@@ -165,13 +186,26 @@
         // Ball hitting the bat
         if (
             ball.x > bat.x &&
-            ball.x < bat.x + bat.width &&
+            ball.x < bat.x + 40 &&
             ball.y + ball.radius > bat.y &&
             bat.swinging
         ) {
-            ball.dy *= -1;
-            score++;
+            ball.dy = -Math.abs(ball.dy); // Bounce upwards
+            ball.dx *= 1.2; // Speed up ball
         }
+
+        // Ball hitting zones
+        field.zones.forEach(zone => {
+            if (
+                ball.x > zone.x &&
+                ball.x < zone.x + zone.width &&
+                ball.y > zone.y &&
+                ball.y < zone.y + zone.height
+            ) {
+                score += zone.type === "4" ? 4 : 6;
+                resetBall();
+            }
+        });
 
         // Ball hitting the ground
         if (ball.y - ball.radius > canvas.height) {
