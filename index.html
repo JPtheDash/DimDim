@@ -3,214 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stickman Cricket</title>
+    <title>IPL Betting Game</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
-            overflow: hidden;
-            background-color: #87CEEB;
+            padding: 0;
+            background: linear-gradient(to bottom, #f0f8ff, #4682b4);
+            color: #333;
         }
-        canvas {
-            display: block;
-            background: linear-gradient(#87CEEB, #228B22); /* Sky to grass */
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #1e90ff;
+            color: #fff;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin-bottom: 10px;
+            color: #1e90ff;
+        }
+
+        .team-list, .player-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .team, .player {
+            text-align: center;
+            padding: 10px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .team:hover, .player:hover {
+            background: #e0f7fa;
+            transform: scale(1.05);
+        }
+
+        .bet-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .bet-section input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .bet-section button {
+            padding: 10px 20px;
+            background: #1e90ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .bet-section button:hover {
+            background: #4682b4;
         }
     </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    <div class="header">
+        <h1>IPL Betting Game</h1>
+        <p>Place your bets on your favorite players and teams!</p>
+    </div>
 
-    // Canvas dimensions
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    <div class="container">
+        <!-- Select Team Section -->
+        <div class="section">
+            <h2>Select a Team</h2>
+            <div class="team-list">
+                <div class="team">Mumbai Indians</div>
+                <div class="team">Chennai Super Kings</div>
+                <div class="team">Royal Challengers Bangalore</div>
+                <div class="team">Kolkata Knight Riders</div>
+                <div class="team">Delhi Capitals</div>
+                <div class="team">Punjab Kings</div>
+                <div class="team">Sunrisers Hyderabad</div>
+                <div class="team">Rajasthan Royals</div>
+            </div>
+        </div>
 
-    // Game variables
-    const player = { x: canvas.width / 2, y: canvas.height - 100, width: 10, height: 50, speed: 10 };
-    const bat = { length: 50, angle: Math.PI, swinging: false };
-    const ball = { x: canvas.width / 2, y: 0, radius: 10, dx: 0, dy: 4, active: true };
-    const boundarySize = 200; // Square boundary size
-    let ballsRemaining = 10;
-    let score = 0;
+        <!-- Select Player Section -->
+        <div class="section">
+            <h2>Select a Player</h2>
+            <div class="player-list">
+                <div class="player">Virat Kohli</div>
+                <div class="player">MS Dhoni</div>
+                <div class="player">Rohit Sharma</div>
+                <div class="player">KL Rahul</div>
+                <div class="player">Jasprit Bumrah</div>
+                <div class="player">David Warner</div>
+                <div class="player">Rashid Khan</div>
+                <div class="player">Sanju Samson</div>
+            </div>
+        </div>
 
-    // Key control
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "ArrowLeft" && player.x > 50) player.x -= player.speed;
-        if (event.key === "ArrowRight" && player.x < canvas.width - 50) player.x += player.speed;
-        if (event.key === " " || event.code === "Space") swingBat();
-    });
-
-    canvas.addEventListener("click", swingBat);
-
-    // Draw stickman
-    function drawStickman() {
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = 2;
-
-        // Head
-        ctx.beginPath();
-        ctx.arc(player.x, player.y - 30, 10, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Body
-        ctx.moveTo(player.x, player.y - 20);
-        ctx.lineTo(player.x, player.y);
-
-        // Arms
-        ctx.moveTo(player.x - 15, player.y - 15);
-        ctx.lineTo(player.x + 15, player.y - 15);
-
-        // Legs
-        ctx.moveTo(player.x, player.y);
-        ctx.lineTo(player.x - 10, player.y + 20);
-        ctx.moveTo(player.x, player.y);
-        ctx.lineTo(player.x + 10, player.y + 20);
-
-        ctx.stroke();
-    }
-
-    // Draw bat
-    function drawBat() {
-        ctx.strokeStyle = "#8B4513";
-        ctx.lineWidth = 5;
-
-        const batEndX = player.x + Math.cos(bat.angle) * bat.length;
-        const batEndY = player.y - Math.sin(bat.angle) * bat.length;
-
-        ctx.beginPath();
-        ctx.moveTo(player.x, player.y);
-        ctx.lineTo(batEndX, batEndY);
-        ctx.stroke();
-    }
-
-    // Swing bat
-    function swingBat() {
-        if (!bat.swinging) {
-            bat.swinging = true;
-            let swingDirection = -0.05;
-
-            const swingInterval = setInterval(() => {
-                bat.angle += swingDirection;
-
-                if (bat.angle <= Math.PI - Math.PI / 4) swingDirection = 0.05; // Reverse direction
-                if (bat.angle >= Math.PI + Math.PI / 4) {
-                    bat.swinging = false;
-                    clearInterval(swingInterval);
-                }
-            }, 10);
-        }
-    }
-
-    // Draw ball
-    function drawBall() {
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#FF4500";
-        ctx.fill();
-    }
-
-    // Draw boundary
-    function drawBoundary() {
-        const boundaryX = canvas.width / 2 - boundarySize / 2;
-        const boundaryY = canvas.height / 2 - boundarySize / 2;
-
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = 2;
-
-        // Outer boundary
-        ctx.strokeRect(boundaryX, boundaryY, boundarySize, boundarySize);
-
-        // Segments
-        ctx.fillStyle = "blue";
-        ctx.fillRect(boundaryX, boundaryY, boundarySize / 2, boundarySize / 2);
-        ctx.fillStyle = "green";
-        ctx.fillRect(boundaryX + boundarySize / 2, boundaryY, boundarySize / 2, boundarySize / 2);
-        ctx.fillStyle = "blue";
-        ctx.fillRect(boundaryX, boundaryY + boundarySize / 2, boundarySize / 2, boundarySize / 2);
-        ctx.fillStyle = "green";
-        ctx.fillRect(boundaryX + boundarySize / 2, boundaryY + boundarySize / 2, boundarySize / 2, boundarySize / 2);
-
-        // Labels
-        ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
-        ctx.fillText("4", boundaryX + 20, boundaryY + 30);
-        ctx.fillText("6", boundaryX + boundarySize - 40, boundaryY + 30);
-        ctx.fillText("4", boundaryX + 20, boundaryY + boundarySize - 20);
-        ctx.fillText("6", boundaryX + boundarySize - 40, boundaryY + boundarySize - 20);
-    }
-
-    // Check collision with boundary
-    function checkBoundaryCollision() {
-        const boundaryX = canvas.width / 2 - boundarySize / 2;
-        const boundaryY = canvas.height / 2 - boundarySize / 2;
-
-        if (
-            ball.x > boundaryX &&
-            ball.x < boundaryX + boundarySize &&
-            ball.y > boundaryY &&
-            ball.y < boundaryY + boundarySize
-        ) {
-            if (ball.x < boundaryX + boundarySize / 2) {
-                score += 4; // Left side = 4
-            } else {
-                score += 6; // Right side = 6
-            }
-            resetBall();
-        }
-    }
-
-    // Reset ball position
-    function resetBall() {
-        ballsRemaining--;
-        ball.x = canvas.width / 2;
-        ball.y = 0;
-        ball.dx = 0;
-        ball.dy = 4;
-
-        if (ballsRemaining === 0) {
-            alert("Game Over! Final Score: " + score);
-        }
-    }
-
-    // Update ball position
-    function updateBall() {
-        ball.y += ball.dy;
-
-        // Bat collision
-        const batEndX = player.x + Math.cos(bat.angle) * bat.length;
-        const batEndY = player.y - Math.sin(bat.angle) * bat.length;
-
-        const dist = Math.sqrt((ball.x - batEndX) ** 2 + (ball.y - batEndY) ** 2);
-
-        if (dist < ball.radius + 5 && bat.swinging) {
-            ball.dx = (ball.x - player.x) / 10;
-            ball.dy = -4;
-        }
-
-        checkBoundaryCollision();
-    }
-
-    // Game loop
-    function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        drawBoundary();
-        drawStickman();
-        drawBat();
-        drawBall();
-
-        updateBall();
-
-        ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
-        ctx.fillText("Score: " + score, 20, 30);
-        ctx.fillText("Balls Remaining: " + ballsRemaining, 20, 60);
-
-        if (ballsRemaining > 0) requestAnimationFrame(gameLoop);
-    }
-
-    gameLoop();
-</script>
+        <!-- Betting Section -->
+        <div class="section">
+            <h2>Place Your Bet</h2>
+            <div class="bet-section">
+                <input type="text" placeholder="Enter bet amount">
+                <button>Submit Bet</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
