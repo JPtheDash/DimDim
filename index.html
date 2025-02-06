@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kulhad Raja - The Game</title>
+  <title>Kulhad Raja - Text-Based Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,21 +11,15 @@
       color: #5a3e36;
       text-align: center;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
     h1 {
-      margin-top: 20px;
       font-size: 2.5rem;
+      margin-bottom: 20px;
     }
     .game-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-    .game-area {
-      width: 80%;
       max-width: 600px;
+      margin: 0 auto;
       background-color: #d7b89c;
       padding: 20px;
       border-radius: 10px;
@@ -57,24 +51,25 @@
       margin-top: 20px;
       font-size: 1.2rem;
       line-height: 1.5;
+      background-color: #f0d9c2;
+      padding: 15px;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <h1>Kulhad Raja</h1>
   <div class="game-container">
-    <div class="game-area">
-      <div class="score-display">
-        Score: <span id="score">0</span>
-      </div>
-      <div class="actions">
-        <button id="action1">Collect Kulhads</button>
-        <button id="action2">Build Kingdom</button>
-        <button id="action3">Trade Resources</button>
-      </div>
-      <div class="story-area" id="story">
-        Welcome to the kingdom of Kulhad Raja! Start by collecting kulhads and building your empire.
-      </div>
+    <div class="score-display">
+      Score: <span id="score">0</span>
+    </div>
+    <div class="actions">
+      <button id="action1">Collect Kulhads</button>
+      <button id="action2">Build Kingdom</button>
+      <button id="action3">Trade Resources</button>
+    </div>
+    <div class="story-area" id="story">
+      Welcome to the kingdom of Kulhad Raja! Start by collecting kulhads and building your empire.
     </div>
   </div>
 
