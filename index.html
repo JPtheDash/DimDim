@@ -3,184 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPL Betting Game</title>
+    <title>Kulhad Raja</title>
     <style>
-        /* General Styles */
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #1c1c1c, #3b5998, #1e90ff);
-            color: #fff;
-            overflow-x: hidden;
-        }
-
-        h1, h2 {
-            font-weight: bold;
-            margin: 0;
-        }
-
-        p {
-            margin: 0;
-            font-size: 16px;
-            color: #ddd;
-        }
-
-        /* Header Styles */
-        .header {
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(to bottom, #1e90ff, #4682b4);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            color: #fff;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section h2 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #ffdd00;
-        }
-
-        /* Team and Player List */
-        .team-list, .player-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
-
-        .team, .player {
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #222, #444);
-            border-radius: 10px;
-            border: 2px solid #333;
-            transition: transform 0.3s, box-shadow 0.3s;
-            color: #ffdd00;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .team:hover, .player:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 8px 15px rgba(255, 255, 255, 0.2);
-            border-color: #ffdd00;
-            background: linear-gradient(135deg, #555, #888);
-        }
-
-        /* Betting Section */
-        .bet-section {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
         }
-
-        .bet-section input {
-            width: 80%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            outline: none;
+        .game-box {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            border: 2px solid #333;
+            background-color: #fff;
+            overflow: hidden;
             text-align: center;
         }
-
-        .bet-section button {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #ff9900, #ffcc00);
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
+        .logo {
+            font-size: 24px;
             font-weight: bold;
-            color: #1c1c1c;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px 0;
+            color: #333;
         }
-
-        .bet-section button:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 15px rgba(255, 204, 0, 0.6);
+        .kulhad {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 120px;
+            background-color: #8B4513;
+            border-radius: 0 0 50px 50px;
+            overflow: hidden;
         }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .team-list, .player-list {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-
-            .bet-section input {
-                width: 90%;
+        .tea-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+            background-color: #A0522D;
+            transition: height 0.2s;
+        }
+        .drop {
+            position: absolute;
+            top: -20px;
+            width: 10px;
+            height: 20px;
+            background-color: #A0522D;
+            border-radius: 50%;
+            animation: fall 2s linear infinite;
+        }
+        .score, .timer {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(500px);
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>IPL Betting Game</h1>
-        <p>Pick your favorites and bet with confidence!</p>
-    </div>
-
-    <div class="container">
-        <!-- Team Selection Section -->
-        <div class="section">
-            <h2>Select Your Team</h2>
-            <div class="team-list">
-                <div class="team">Mumbai Indians</div>
-                <div class="team">Chennai Super Kings</div>
-                <div class="team">Royal Challengers Bangalore</div>
-                <div class="team">Kolkata Knight Riders</div>
-                <div class="team">Delhi Capitals</div>
-                <div class="team">Punjab Kings</div>
-                <div class="team">Sunrisers Hyderabad</div>
-                <div class="team">Rajasthan Royals</div>
-            </div>
-        </div>
-
-        <!-- Player Selection Section -->
-        <div class="section">
-            <h2>Pick Your Star Player</h2>
-            <div class="player-list">
-                <div class="player">Virat Kohli</div>
-                <div class="player">MS Dhoni</div>
-                <div class="player">Rohit Sharma</div>
-                <div class="player">KL Rahul</div>
-                <div class="player">Jasprit Bumrah</div>
-                <div class="player">David Warner</div>
-                <div class="player">Rashid Khan</div>
-                <div class="player">Sanju Samson</div>
-            </div>
-        </div>
-
-        <!-- Betting Section -->
-        <div class="section">
-            <h2>Place Your Bet</h2>
-            <div class="bet-section">
-                <input type="text" placeholder="Enter your bet amount">
-                <button>Submit Bet</button>
-            </div>
+    <div class="game-box">
+        <div class="logo">Kulhad Raja</div>
+        <div class="score">Score: 0</div>
+        <div class="timer">Time: 10</div>
+        <div class="kulhad">
+            <div class="tea-fill"></div>
         </div>
     </div>
+
+    <script>
+        const gameBox = document.querySelector('.game-box');
+        const teaFill = document.querySelector('.tea-fill');
+        const scoreDisplay = document.querySelector('.score');
+        const timerDisplay = document.querySelector('.timer');
+        let score = 0;
+        let timeLeft = 10;
+        let gameInterval;
+        let timerInterval;
+
+        function createDrop() {
+            const drop = document.createElement('div');
+            drop.classList.add('drop');
+            drop.style.left = Math.random() * 280 + 'px';
+            gameBox.appendChild(drop);
+
+            drop.addEventListener('animationend', () => {
+                drop.remove();
+            });
+
+            drop.addEventListener('click', () => {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                teaFill.style.height = `${Math.min(score * 10, 100)}%`;
+                drop.remove();
+            });
+        }
+
+        function startGame() {
+            gameInterval = setInterval(createDrop, 500);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time: ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(gameInterval);
+                    clearInterval(timerInterval);
+                    alert(`Game Over! Your score is ${score}`);
+                }
+            }, 1000);
+        }
+
+        startGame();
+    </script>
 </body>
 </html>
