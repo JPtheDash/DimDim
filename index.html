@@ -3,176 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KulhadRaja - Create Your Kulhad</title>
+  <title>MENUWALA</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
       text-align: center;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
       padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
     }
     h1 {
-      color: #d35400;
-      font-size: 2.5rem;
+      color: #333;
+      font-size: 2.5em;
       margin-bottom: 20px;
     }
-    .step {
-      display: none;
-      margin: 20px auto;
-    }
-    .step.active {
-      display: block;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
+    .container {
+      background: white;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: 0 auto;
     }
-    button {
-      padding: 12px 24px;
-      font-size: 1rem;
-      background-color: #e67e22;
+    .qr-scanner {
+      margin: 20px 0;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .menu-item button {
+      background: #28a745;
       color: white;
       border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
       cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
     }
-    button:hover {
-      background-color: #d35400;
+    .cart {
+      margin-top: 20px;
     }
-    input[type="text"] {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 80%;
-      max-width: 300px;
-      margin: 10px 0;
-    }
-    .kulhad-designs {
+    .cart-item {
       display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
     }
-    .kulhad-designs img {
-      width: 120px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    .kulhad-designs img:hover {
-      transform: scale(1.1);
-    }
-    .kulhad-designs img.selected {
-      border-color: #e67e22;
-    }
-    .final-kulhad {
+    .payment {
       margin-top: 20px;
     }
-    .final-kulhad img {
-      width: 200px;
-      border-radius: 50%;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    .final-kulhad p {
-      font-size: 1.2rem;
+    .token {
+      margin-top: 20px;
+      font-size: 1.5em;
       color: #333;
-      margin-top: 10px;
     }
-    .footer {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      color: #777;
+    .timer {
+      font-size: 1.2em;
+      color: #d9534f;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>KulhadRaja - Create Your Kulhad</h1>
-    <div class="step active" id="step0">
-      <h2>Welcome to KulhadRaja</h2>
-      <p>Enter your name to start creating your Kulhad:</p>
-      <input type="text" id="nameInput" placeholder="Your Name">
-      <button onclick="startGame()">Start</button>
+    <h1>MENUWALA</h1>
+    <div class="qr-scanner">
+      <p>Scan the QR code below or use your camera to open the menu:</p>
+      <!-- Placeholder for QR Code -->
+      <img src="https://via.placeholder.com/150" alt="QR Code">
     </div>
-    <div class="step" id="step1">
-      <h2>Step 1: Break the Rock</h2>
-      <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Rock">
-      <p>Click the button to break the rock and get a piece.</p>
-      <button onclick="nextStep('step2')">Break Rock</button>
-    </div>
-    <div class="step" id="step2">
-      <h2>Step 2: Crush the Piece</h2>
-      <img src="https://images.unsplash.com/photo-1582481725274-d63bdf929a90?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Rock Piece">
-      <p>Click the button to crush the piece into clay.</p>
-      <button onclick="nextStep('step3')">Crush Piece</button>
-    </div>
-    <div class="step" id="step3">
-      <h2>Step 3: Make Clay</h2>
-      <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Clay">
-      <p>Your clay is ready! Click to proceed.</p>
-      <button onclick="nextStep('step4')">Next</button>
-    </div>
-    <div class="step" id="step4">
-      <h2>Step 4: Select a Kulhad Design</h2>
-      <div class="kulhad-designs">
-        <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=120&q=80" alt="Design 1" onclick="selectDesign('Design 1')">
-        <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=120&q=80" alt="Design 2" onclick="selectDesign('Design 2')">
-        <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=120&q=80" alt="Design 3" onclick="selectDesign('Design 3')">
+
+    <!-- Menu Section -->
+    <div class="menu">
+      <h2>Menu</h2>
+      <div class="menu-item">
+        <span>Paneer Tikka</span>
+        <button onclick="addToCart('Paneer Tikka')">Add</button>
       </div>
-      <button onclick="nextStep('step5')">Proceed with Selected Design</button>
-    </div>
-    <div class="step" id="step5">
-      <h2>Step 5: Your Kulhad is Ready!</h2>
-      <div class="final-kulhad">
-        <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Final Kulhad">
-        <p>KulhadRaja created by <span id="userName"></span></p>
+      <div class="menu-item">
+        <span>Butter Chicken</span>
+        <button onclick="addToCart('Butter Chicken')">Add</button>
+      </div>
+      <div class="menu-item">
+        <span>Garlic Naan</span>
+        <button onclick="addToCart('Garlic Naan')">Add</button>
       </div>
     </div>
-    <div class="footer">
-      <p>© 2025 KulhadRaja. All rights reserved.</p>
+
+    <!-- Cart Section -->
+    <div class="cart">
+      <h2>Your Cart</h2>
+      <div id="cart-items"></div>
+      <button onclick="placeOrder()">Place Order</button>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="payment" id="payment" style="display: none;">
+      <h2>Payment</h2>
+      <label>
+        <input type="radio" name="payment" value="cash" checked> Cash
+      </label>
+      <button onclick="generateToken()">Confirm Payment</button>
+    </div>
+
+    <!-- Token Section -->
+    <div class="token" id="token" style="display: none;">
+      <h2>Your Token</h2>
+      <p id="token-number"></p>
+      <p class="timer">Order will arrive in: <span id="timer">2:45</span></p>
     </div>
   </div>
 
   <script>
-    let userName = "";
-    let selectedDesign = "";
+    let cart = [];
 
-    function startGame() {
-      userName = document.getElementById("nameInput").value;
-      if (userName) {
-        nextStep("step1");
-      } else {
-        alert("Please enter your name to start.");
-      }
+    // Function to add items to cart
+    function addToCart(item) {
+      cart.push(item);
+      updateCart();
     }
 
-    function nextStep(stepId) {
-      document.querySelectorAll(".step").forEach(step => {
-        step.classList.remove("active");
+    // Function to update the cart display
+    function updateCart() {
+      const cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `<span>${item}</span>`;
+        cartItems.appendChild(div);
       });
-      document.getElementById(stepId).classList.add("active");
-      if (stepId === "step5") {
-        document.getElementById("userName").textContent = userName;
-      }
     }
 
-    function selectDesign(design) {
-      selectedDesign = design;
-      document.querySelectorAll(".kulhad-designs img").forEach(img => {
-        img.classList.remove("selected");
-      });
-      document.querySelector(`.kulhad-designs img[alt="${design}"]`).classList.add("selected");
+    // Function to place order
+    function placeOrder() {
+      document.getElementById('payment').style.display = 'block';
+    }
+
+    // Function to generate token
+    function generateToken() {
+      const tokenNumber = Math.floor(Math.random() * 1000);
+      document.getElementById('token-number').innerText = `Token #${tokenNumber}`;
+      document.getElementById('token').style.display = 'block';
+      document.getElementById('payment').style.display = 'none';
+
+      // Start timer
+      let timeLeft = 165; // 2:45 minutes in seconds
+      const timer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
+        if (timeLeft < 0) {
+          clearInterval(timer);
+          document.getElementById('timer').innerText = 'Order Delivered!';
+        }
+      }, 1000);
     }
   </script>
 </body>
