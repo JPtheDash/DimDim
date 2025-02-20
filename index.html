@@ -18,6 +18,18 @@
       color: #fff;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
+    .om-symbol {
+      font-size: 3rem;
+      color: #ffeb3b;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .restaurant-name {
+      font-family: 'Georgia', serif;
+      font-size: 2.2rem;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin: 10px 0;
+    }
     .menu-item {
       border: 1px solid #ddd;
       padding: 15px;
@@ -92,18 +104,26 @@
     .fade-in {
       animation: fadeIn 0.5s ease-in;
     }
+    .copyright {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
   </style>
 </head>
 <body>
-  <h1>Welcome to <span id="restaurant-name">MenuMize</span></h1>
+  <div class="om-symbol">🕉️</div>
+  <div class="restaurant-name">Bhubaneswari Classic</div>
 
   <!-- Menu Section -->
   <div id="menu-section" class="section fade-in">
     <h2>Menu</h2>
-    <div class="menu-item" onclick="selectItem(this)">🍔 Burger - $5</div>
-    <div class="menu-item" onclick="selectItem(this)">🍕 Pizza - $10</div>
-    <div class="menu-item" onclick="selectItem(this)">🍝 Pasta - $8</div>
-    <div class="menu-item" onclick="selectItem(this)">🥗 Salad - $6</div>
+    <div class="menu-item" onclick="selectItem(this)">🍛 Veg Thali - ₹150</div>
+    <div class="menu-item" onclick="selectItem(this)">🍗 Chicken Biryani - ₹200</div>
+    <div class="menu-item" onclick="selectItem(this)">🍤 Prawn Curry - ₹250</div>
+    <div class="menu-item" onclick="selectItem(this)">🥘 Paneer Butter Masala - ₹180</div>
+    <div class="menu-item" onclick="selectItem(this)">🍚 Dal Makhani with Rice - ₹120</div>
     <button onclick="confirmOrder()">Confirm Order</button>
   </div>
 
@@ -126,7 +146,13 @@
   <div id="thank-you-section" class="section hidden fade-in">
     <h2>Thank You! 🎉</h2>
     <p>Your order has been placed successfully.</p>
+    <p>Your Order Number: <strong id="order-number"></strong></p>
     <p>Please give us feedback at: <a href="https://www.google.com/maps" target="_blank">Google Listed Shop Name</a></p>
+  </div>
+
+  <!-- Copyright Footer -->
+  <div class="copyright">
+    Copyright © Spider Innovations
   </div>
 
   <script>
@@ -163,6 +189,9 @@
     function placeOrder() {
       document.getElementById('payment-section').classList.add('hidden');
       document.getElementById('thank-you-section').classList.remove('hidden');
+      // Generate a random order number
+      const orderNumber = Math.floor(Math.random() * 1000000);
+      document.getElementById('order-number').textContent = `#${orderNumber}`;
     }
   </script>
 </body>
