@@ -106,20 +106,21 @@
         padding: 1rem 0;
         overflow: hidden;
         white-space: nowrap;
+        font-size: 1.5rem; /* Bigger letters */
       }
 
       .scrolling-text {
         display: inline-block;
-        padding-left: 100%;
+        padding-left: 100%; /* Start off-screen */
         animation: scroll 20s linear infinite;
       }
 
       @keyframes scroll {
         0% {
-          transform: translateX(100%);
+          transform: translateX(100%); /* Start from the right */
         }
         100% {
-          transform: translateX(-100%);
+          transform: translateX(-100%); /* Move to the left */
         }
       }
     </style>
@@ -140,7 +141,13 @@
       <div class="homepage__features">
         <h2>Our Features</h2>
         <div class="homepage__featuresCards">
-          <div>Feature 1</div>
+          <div>
+            <h3>Odia Word Game</h3>
+            <p>Play the Odia word game and test your vocabulary!</p>
+            <a href="feature1.html" style="text-decoration: none;">
+              <button>Play Now</button>
+            </a>
+          </div>
           <div>Feature 2</div>
           <div>Feature 3</div>
         </div>
@@ -150,7 +157,7 @@
     <!-- Scrolling Footer -->
     <footer>
       <div class="scrolling-text">
-        धनलक्ष्मी - ధనలక్ష్మి - ধনলক্ষ্মী - ધનલક્ષ્મી - ಧನಲಕ್ಷ್ಮಿ - ധനലക്ഷ്മി - ਧਨਲਕ੍ਸ਼੍ਮੀ - ଧନଲକ୍ଷ୍ମୀ - Welcome to DhanaLaxmi!
+        धनलक्ष्मी &nbsp; - &nbsp; ధనలక్ష్మి &nbsp; - &nbsp; ধনলক্ষ্মী &nbsp; - &nbsp; ધનલક્ષ્મી &nbsp; - &nbsp; ಧನಲಕ್ಷ್ಮಿ &nbsp; - &nbsp; ധനലക്ഷ്മി &nbsp; - &nbsp; ਧਨਲਕ੍ਸ਼੍ਮੀ &nbsp; - &nbsp; ଧନଲକ୍ଷ୍ମୀ &nbsp; - &nbsp; Welcome to DhanaLaxmi!
       </div>
     </footer>
   </body>
