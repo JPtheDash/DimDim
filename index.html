@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homepage</title>
+    <title>DhanaLaxmi</title>
     <style>
       /* General Reset */
       * {
@@ -16,10 +16,12 @@
         font-family: Arial, sans-serif;
         background: linear-gradient(135deg, #ffd700, #b8860b);
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
         color: #333;
+        overflow: hidden;
       }
 
       /* Homepage Container */
@@ -92,6 +94,34 @@
       .homepage__featuresCards div:hover {
         transform: translateY(-10px);
       }
+
+      /* Scrolling Footer */
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 1rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .scrolling-text {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scroll 20s linear infinite;
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
     </style>
   </head>
   <body>
@@ -100,7 +130,7 @@
       <!-- Front Section -->
       <div class="homepage__front">
         <div class="homepage__frontText">
-          <h2>The Online <br /> Betting Game</h2>
+          <h2>DhanaLaxmi</h2>
           <p>Signup today to play the best game alive!</p>
           <button>Signup</button>
         </div>
@@ -116,5 +146,12 @@
         </div>
       </div>
     </div>
+
+    <!-- Scrolling Footer -->
+    <footer>
+      <div class="scrolling-text">
+        धनलक्ष्मी - ధనలక్ష్మి - ধনলক্ষ্মী - ધનલક્ષ્મી - ಧನಲಕ್ಷ್ಮಿ - ധനലക്ഷ്മി - ਧਨਲਕ੍ਸ਼੍ਮੀ - ଧନଲକ୍ଷ୍ମୀ - Welcome to DhanaLaxmi!
+      </div>
+    </footer>
   </body>
 </html>
