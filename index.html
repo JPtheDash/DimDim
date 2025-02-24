@@ -1,198 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MenuMize</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #fff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    .om-symbol {
-      font-size: 3rem;
-      color: #ffeb3b;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    .restaurant-name {
-      font-family: 'Georgia', serif;
-      font-size: 2.2rem;
-      color: #fff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      margin: 10px 0;
-    }
-    .menu-item {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin: 10px auto;
-      width: 80%;
-      max-width: 300px;
-      background-color: #fff;
-      cursor: pointer;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .menu-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-    .menu-item.selected {
-      background-color: #d4edda;
-      border-color: #c3e6cb;
-    }
-    button {
-      padding: 12px 24px;
-      font-size: 1rem;
-      margin: 20px;
-      cursor: pointer;
-      background-color: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 25px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background-color: #218838;
-      transform: translateY(-2px);
-    }
-    .hidden {
-      display: none;
-    }
-    .section {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      margin: 20px auto;
-      width: 90%;
-      max-width: 500px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    ul li {
-      background: #f8f9fa;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .fade-in {
-      animation: fadeIn 0.5s ease-in;
-    }
-    .copyright {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      color: #fff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
-  </style>
-</head>
-<body>
-  <div class="om-symbol">🕉️</div>
-  <div class="restaurant-name">Bhubaneswari Classic</div>
-
-  <!-- Menu Section -->
-  <div id="menu-section" class="section fade-in">
-    <h2>Menu</h2>
-    <div class="menu-item" onclick="selectItem(this)">🍛 Veg Thali - ₹150</div>
-    <div class="menu-item" onclick="selectItem(this)">🍗 Chicken Biryani - ₹200</div>
-    <div class="menu-item" onclick="selectItem(this)">🍤 Prawn Curry - ₹250</div>
-    <div class="menu-item" onclick="selectItem(this)">🥘 Paneer Butter Masala - ₹180</div>
-    <div class="menu-item" onclick="selectItem(this)">🍚 Dal Makhani with Rice - ₹120</div>
-    <button onclick="confirmOrder()">Confirm Order</button>
-  </div>
-
-  <!-- Confirm Order Section -->
-  <div id="confirm-section" class="section hidden fade-in">
-    <h2>Confirm Your Order</h2>
-    <p>You have selected:</p>
-    <ul id="selected-items"></ul>
-    <button onclick="proceedToPayment()">Proceed to Payment</button>
-  </div>
-
-  <!-- Payment Section -->
-  <div id="payment-section" class="section hidden fade-in">
-    <h2>Proceed to Payment</h2>
-    <p>Please complete your payment to place the order.</p>
-    <button onclick="placeOrder()">Place Order</button>
-  </div>
-
-  <!-- Thank You Section -->
-  <div id="thank-you-section" class="section hidden fade-in">
-    <h2>Thank You! 🎉</h2>
-    <p>Your order has been placed successfully.</p>
-    <p>Your Order Number: <strong id="order-number"></strong></p>
-    <p>Please give us feedback at: <a href="https://www.google.com/maps" target="_blank">Google Listed Shop Name</a></p>
-  </div>
-
-  <!-- Copyright Footer -->
-  <div class="copyright">
-    Copyright © Spider Innovations
-  </div>
-
-  <script>
-    let selectedItems = [];
-
-    // Function to select menu items
-    function selectItem(item) {
-      item.classList.toggle('selected');
-      if (item.classList.contains('selected')) {
-        selectedItems.push(item.textContent);
-      } else {
-        selectedItems = selectedItems.filter(i => i !== item.textContent);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homepage</title>
+    <style>
+      /* General Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    }
 
-    // Function to confirm order
-    function confirmOrder() {
-      if (selectedItems.length === 0) {
-        alert('Please select at least one item.');
-        return;
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #ffd700, #b8860b);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
       }
-      document.getElementById('menu-section').classList.add('hidden');
-      document.getElementById('confirm-section').classList.remove('hidden');
-      document.getElementById('selected-items').innerHTML = selectedItems.map(item => `<li>${item}</li>`).join('');
-    }
 
-    // Function to proceed to payment
-    function proceedToPayment() {
-      document.getElementById('confirm-section').classList.add('hidden');
-      document.getElementById('payment-section').classList.remove('hidden');
-    }
+      /* Homepage Container */
+      .homepage__container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        max-width: 800px;
+        width: 90%;
+        padding: 2rem;
+        text-align: center;
+      }
 
-    // Function to place order
-    function placeOrder() {
-      document.getElementById('payment-section').classList.add('hidden');
-      document.getElementById('thank-you-section').classList.remove('hidden');
-      // Generate a random order number
-      const orderNumber = Math.floor(Math.random() * 1000000);
-      document.getElementById('order-number').textContent = `#${orderNumber}`;
-    }
-  </script>
-</body>
+      /* Front Section */
+      .homepage__frontText h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #b8860b;
+      }
+
+      .homepage__frontText p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        color: #555;
+      }
+
+      .homepage__frontText button {
+        background: #b8860b;
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .homepage__frontText button:hover {
+        background: #ffd700;
+      }
+
+      /* Features Section */
+      .homepage__features {
+        margin-top: 2rem;
+      }
+
+      .homepage__features h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #b8860b;
+      }
+
+      .homepage__featuresCards {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .homepage__featuresCards div {
+        background: #f4f4f4;
+        padding: 1.5rem;
+        border-radius: 10px;
+        width: 30%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .homepage__featuresCards div:hover {
+        transform: translateY(-10px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Homepage Container -->
+    <div class="homepage__container">
+      <!-- Front Section -->
+      <div class="homepage__front">
+        <div class="homepage__frontText">
+          <h2>The Online <br /> Betting Game</h2>
+          <p>Signup today to play the best game alive!</p>
+          <button>Signup</button>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="homepage__features">
+        <h2>Our Features</h2>
+        <div class="homepage__featuresCards">
+          <div>Feature 1</div>
+          <div>Feature 2</div>
+          <div>Feature 3</div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
