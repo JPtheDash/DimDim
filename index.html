@@ -1,181 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DhanaLaxmi</title>
-    <style>
-      /* General Reset */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/abd.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="var(--black)" />
+    <meta name="devine 11" content="devine path to destiny , play and rule" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open Sans"
+      rel="stylesheet"
+    />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
 
-      body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #ffd700, #b8860b);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        color: #333;
-        overflow: hidden;
-      }
-
-      /* Homepage Container */
-      .homepage__container {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-        max-width: 800px;
-        width: 90%;
-        padding: 2rem;
-        text-align: center;
-      }
-
-      /* Front Section */
-      .homepage__frontText h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: #b8860b;
-      }
-
-      .homepage__frontText p {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-        color: #555;
-      }
-
-      .homepage__frontText button {
-        background: #b8860b;
-        color: white;
-        border: none;
-        padding: 0.8rem 2rem;
-        font-size: 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-
-      .homepage__frontText button:hover {
-        background: #ffd700;
-      }
-
-      /* Features Section */
-      .homepage__features {
-        margin-top: 2rem;
-      }
-
-      .homepage__features h2 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: #b8860b;
-      }
-
-      .homepage__featuresCards {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-
-      .homepage__featuresCards div {
-        background: #f4f4f4;
-        padding: 1.5rem;
-        border-radius: 10px;
-        width: 30%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-      }
-
-      .homepage__featuresCards div:hover {
-        transform: translateY(-10px);
-      }
-
-      /* Akshara Word Button */
-      .akshara-btn {
-        background: #b8860b;
-        color: white;
-        border: none;
-        padding: 0.5rem 1.5rem;
-        font-size: 0.9rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        margin-top: 1rem;
-      }
-
-      .akshara-btn:hover {
-        background: #ffd700;
-      }
-
-      /* Scrolling Footer */
-      footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 1rem 0;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 1.5rem; /* Bigger letters */
-      }
-
-      .scrolling-text {
-        display: inline-block;
-        padding-left: 100%; /* Start off-screen */
-        animation: scroll 15s linear infinite; /* Faster scroll */
-      }
-
-      @keyframes scroll {
-        0% {
-          transform: translateX(100%); /* Start from the right */
-        }
-        100% {
-          transform: translateX(-100%); /* Move to the left */
-        }
-      }
-    </style>
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>Dream 11 Clone</title>
   </head>
   <body>
-    <!-- Homepage Container -->
-    <div class="homepage__container">
-      <!-- Front Section -->
-      <div class="homepage__front">
-        <div class="homepage__frontText">
-          <h2>DhanaLaxmi</h2>
-          <p>Signup today to play the best game alive!</p>
-          <button>Signup</button>
-        </div>
-      </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
 
-      <!-- Features Section -->
-      <div class="homepage__features">
-        <h2>Our Features</h2>
-        <div class="homepage__featuresCards">
-          <div>
-            <h3>Akshara Word</h3>
-            <p>Play the Odia word game and test your vocabulary!</p>
-            <a href="feature1.html" style="text-decoration: none;">
-              <button class="akshara-btn">Play Now</button>
-            </a>
-          </div>
-          <div>Feature 2</div>
-          <div>Feature 3</div>
-        </div>
-      </div>
-    </div>
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
 
-    <!-- Scrolling Footer -->
-    <footer>
-      <div class="scrolling-text">
-        धनलक्ष्मी &nbsp; - &nbsp; ధనలక్ష్మి &nbsp; - &nbsp; ধনলক্ষ্মী &nbsp; - &nbsp; ધનલક્ષ્મી &nbsp; - &nbsp; ಧನಲಕ್ಷ್ಮಿ &nbsp; - &nbsp; ധനലക്ഷ്മി &nbsp; - &nbsp; ਧਨਲਕ੍ਸ਼੍ਮੀ &nbsp; - &nbsp; ଧନଲକ୍ଷ୍ମୀ &nbsp; - &nbsp; Welcome to DhanaLaxmi!
-      </div>
-    </footer>
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
   </body>
 </html>
