@@ -1,123 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Circular Slider</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #fdfdfd;
-    }
-
-    .dial-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-    }
-
-    .dial-ring {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 10px solid black;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .knob {
-      width: 20px;
-      height: 20px;
-      background: crimson;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -150px);
-      cursor: pointer;
-    }
-
-    .label {
-      position: absolute;
-      color: black;
-      font-family: sans-serif;
-      font-size: 18px;
-    }
-
-    .value-display {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: sans-serif;
-      font-size: 32px;
-    }
-
-    /* Numbers around the dial */
-    .number {
-      position: absolute;
-      font-family: sans-serif;
-      font-size: 16px;
-    }
-
-    .number[data-angle="0"] { top: 90%; left: 50%; transform: translate(-50%, -50%) rotate(0deg); }
-    .number[data-angle="90"] { top: 50%; left: 0%; transform: translate(-50%, -50%) rotate(0deg); }
-    .number[data-angle="180"] { top: 10%; left: 50%; transform: translate(-50%, -50%) rotate(0deg); }
-    .number[data-angle="270"] { top: 50%; left: 100%; transform: translate(-50%, -50%) rotate(0deg); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer's Paradise</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sanskrit {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card h2 {
+            color: #2a5298;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #ffd700;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #3a6fd9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.3);
+        }
+        
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: 1px solid #eee;
+        }
+        
+        .dropdown-trigger {
+            cursor: pointer;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .sanskrit {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="dial-container">
-    <div class="dial-ring"></div>
-    <div class="knob" id="knob"></div>
-    <div class="value-display" id="value">0</div>
-    <div class="number" data-angle="0">0</div>
-    <div class="number" data-angle="90">25</div>
-    <div class="number" data-angle="180">50</div>
-    <div class="number" data-angle="270">100</div>
-  </div>
-
-  <script>
-    const knob = document.getElementById('knob');
-    const valueDisplay = document.getElementById('value');
-    const center = { x: 150, y: 150 };
-    let dragging = false;
-
-    function updateKnob(angle) {
-      const radius = 120;
-      const rad = angle * (Math.PI / 180);
-      const x = center.x + radius * Math.cos(rad);
-      const y = center.y + radius * Math.sin(rad);
-      knob.style.left = `${x}px`;
-      knob.style.top = `${y}px`;
-      valueDisplay.innerText = Math.round((angle / 360) * 100);
-    }
-
-    function getAngleFromCenter(x, y) {
-      const dx = x - center.x;
-      const dy = y - center.y;
-      let angle = Math.atan2(dy, dx) * (180 / Math.PI);
-      angle = (angle + 360) % 360;
-      return angle;
-    }
-
-    knob.addEventListener('mousedown', () => (dragging = true));
-    document.addEventListener('mouseup', () => (dragging = false));
-    document.addEventListener('mousemove', (e) => {
-      if (dragging) {
-        const rect = knob.parentElement.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const angle = getAngleFromCenter(mouseX, mouseY);
-        updateKnob(angle);
-      }
-    });
-
-    updateKnob(270); // Initial position
-  </script>
+    <header>
+        <div class="logo-container">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#ffd700" />
+                    <path d="M30,30 L70,30 L70,70 L30,70 Z" fill="#1e3c72" />
+                    <path d="M35,35 L65,35 L65,65 L35,65 Z" fill="white" />
+                    <path d="M40,40 L60,40 L60,60 L40,60 Z" fill="#1e3c72" />
+                    <text x="50" y="50" font-size="30" text-anchor="middle" fill="white" dy=".3em" font-weight="bold">LP</text>
+                </svg>
+            </div>
+            <h1>Lawyer's Paradise</h1>
+        </div>
+        <div class="sanskrit">सत्यमेव जयते</div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <h2 class="dropdown-trigger">Contact a Lawyer</h2>
+                <div class="dropdown-content" id="contactDropdown">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <select id="city">
+                            <option value="">Select City</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="kolkata">Kolkata</option>
+                            <option value="pune">Pune</option>
+                            <option value="jaipur">Jaipur</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="court">Court Name</label>
+                        <select id="court">
+                            <option value="">Select Court</option>
+                            <optgroup label="High Courts">
+                                <option value="delhi-hc">Delhi High Court</option>
+                                <option value="mumbai-hc">Bombay High Court</option>
+                                <option value="kolkata-hc">Kolkata High Court</option>
+                                <option value="chennai-hc">Madras High Court</option>
+                            </optgroup>
+                            <optgroup label="Subordinate Courts">
+                                <option value="district">District Court</option>
+                                <option value="session">Session Court</option>
+                                <option value="magistrate">Magistrate Court</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="caseType">Case Type</label>
+                        <select id="caseType">
+                            <option value="">Select Case Type</option>
+                            <option value="civil">Civil</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family</option>
+                            <option value="property">Property</option>
+                            <option value="corporate">Corporate</option>
+                            <option value="tax">Tax</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requestType">Request Type</label>
+                        <select id="requestType">
+                            <option value="">Select Request Type</option>
+                            <option value="consultation">Consultation</option>
+                            <option value="documentation">Documentation</option>
+                            <option value="court-representation">Court Representation</option>
+                            <option value="legal-opinion">Legal Opinion</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit">Find a Lawyer</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>I am a Lawyer</h2>
+                <form id="lawyerForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <select id="experience" required>
+                            <option value="">Select Experience</option>
+                            <option value="0-2">0-2 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="6-10">6-10 years</option>
+                            <option value="10+">10+ years</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="practiceYear">Year of Starting Practice</label>
+                        <input type="number" id="practiceYear" placeholder="e.g. 2010" min="1950" max="2023" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="specialization">Case Type / Specialization</label>
+                        <select id="specialization" multiple required>
+                            <option value="civil">Civil</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family</option>
+                            <option value="property">Property</option>
+                            <option value="corporate">Corporate</option>
+                            <option value="tax">Tax</option>
+                            <option value="cyber">Cyber Law</option>
+                            <option value="labor">Labor Law</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit">Register as Lawyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Lawyer's Paradise. All rights reserved.</p>
+        <p>Justice, Integrity, Excellence</p>
+    </footer>
+    
+    <script>
+        // Toggle dropdown functionality
+        document.querySelector('.dropdown-trigger').addEventListener('click', function() {
+            document.getElementById('contactDropdown').classList.toggle('active');
+        });
+        
+        // Form submission handling
+        document.getElementById('lawyerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for registering as a lawyer! We will contact you shortly.');
+            this.reset();
+        });
+        
+        // Simulate form submission for contact lawyer
+        const contactForm = document.querySelector('#contactDropdown');
+        const findLawyerBtn = contactForm.querySelector('button');
+        
+        findLawyerBtn.addEventListener('click', function() {
+            const city = document.getElementById('city').value;
+            const court = document.getElementById('court').value;
+            const caseType = document.getElementById('caseType').value;
+            const requestType = document.getElementById('requestType').value;
+            
+            if(city && court && caseType && requestType) {
+                alert('We are finding the best lawyers for your needs. You will receive matches shortly.');
+            } else {
+                alert('Please fill all the fields to find a lawyer.');
+            }
+        });
+    </script>
 </body>
 </html>
