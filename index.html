@@ -1,165 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ravana vs RaghuPathi</title>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-      background: #222;
-    }
-    #info {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 18px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Headed Ravana vs Raghupathi</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #000;
+            border: 2px solid #444;
+        }
+        #healthBar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: 20px;
+            background-color: #333;
+            border: 1px solid #555;
+        }
+        #healthFill {
+            height: 100%;
+            width: 100%;
+            background-color: #f00;
+            transition: width 0.3s;
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 20px;
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 48px;
+            text-align: center;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div id="info">Health: <span id="health">100</span></div>
-  <canvas id="gameCanvas" width="800" height="500"></canvas>
+    <div id="healthBar">
+        <div id="healthFill"></div>
+    </div>
+    <div id="score">Heads Remaining: 10</div>
+    <div id="gameOver">GAME OVER<br><button onclick="resetGame()">Play Again</button></div>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const healthFill = document.getElementById('healthFill');
+        const scoreElement = document.getElementById('score');
+        const gameOverElement = document.getElementById('gameOver');
 
-    let bowHealth = 100;
-    let arrowCooldown = 0;
-    let arrows = [];
-    let fireballs = [];
-    let ravanaHeads = [];
+        // Game state
+        const gameState = {
+            bow: {
+                x: 100,
+                y: canvas.height / 2,
+                width: 40,
+                height: 80,
+                health: 100,
+                arrows: []
+            },
+            ravana: {
+                heads: [],
+                fireballs: [],
+                headCount: 10,
+                fireRate: 2000 // milliseconds between fireballs
+            },
+            lastFireTime: 0,
+            gameActive: true,
+            headsDefeated: 0
+        };
 
-    // Initialize Ravana's 10 heads
-    for (let i = 0; i < 10; i++) {
-      ravanaHeads.push({
-        x: 50 + i * 70,
-        y: 50,
-        hp: 3,
-        cooldown: Math.random() * 200 + 100,
-      });
-    }
-
-    const bow = {
-      x: canvas.width / 2,
-      y: canvas.height - 50,
-      draw() {
-        ctx.fillStyle = 'gold';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
-        ctx.fill();
-        // health bar
-        ctx.fillStyle = 'red';
-        ctx.fillRect(this.x - 25, this.y + 30, 50, 5);
-        ctx.fillStyle = 'lime';
-        ctx.fillRect(this.x - 25, this.y + 30, 50 * (bowHealth / 100), 5);
-      }
-    };
-
-    function drawRavana() {
-      ravanaHeads.forEach((head, i) => {
-        if (head.hp <= 0) return;
-        ctx.fillStyle = 'purple';
-        ctx.beginPath();
-        ctx.arc(head.x, head.y, 25, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = 'white';
-        ctx.fillText(head.hp, head.x - 5, head.y + 5);
-
-        head.cooldown -= 1;
-        if (head.cooldown <= 0) {
-          fireballs.push({ x: head.x, y: head.y, vx: 0, vy: 3 });
-          head.cooldown = Math.random() * 200 + 100;
+        // Initialize Ravana's heads
+        function initHeads() {
+            gameState.ravana.heads = [];
+            const headSpacing = (canvas.width - 300) / 9;
+            for (let i = 0; i < gameState.ravana.headCount; i++) {
+                gameState.ravana.heads.push({
+                    x: 400 + i * headSpacing,
+                    y: 50 + Math.random() * 50,
+                    width: 40,
+                    height: 40,
+                    hits: 0,
+                    active: true
+                });
+            }
         }
-      });
-    }
 
-    function drawArrows() {
-      arrows = arrows.filter(a => a.y > 0);
-      ctx.fillStyle = 'cyan';
-      arrows.forEach(a => {
-        ctx.fillRect(a.x - 2, a.y, 4, 10);
-        a.y -= 5;
-      });
+        // Draw bow
+        function drawBow() {
+            ctx.fillStyle = '#8B4513'; // Brown color for bow
+            ctx.fillRect(gameState.bow.x, gameState.bow.y, gameState.bow.width, gameState.bow.height);
+            
+            // Draw bow string
+            ctx.strokeStyle = '#FFF';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(gameState.bow.x + gameState.bow.width, gameState.bow.y + 10);
+            ctx.lineTo(gameState.bow.x + gameState.bow.width, gameState.bow.y + gameState.bow.height - 10);
+            ctx.stroke();
+        }
 
-      // Collision detection with heads
-      arrows.forEach((a, ai) => {
-        ravanaHeads.forEach(head => {
-          if (head.hp > 0 && Math.abs(head.x - a.x) < 20 && Math.abs(head.y - a.y) < 20) {
-            head.hp--;
-            arrows.splice(ai, 1);
-          }
+        // Draw Ravana's heads
+        function drawHeads() {
+            gameState.ravana.heads.forEach(head => {
+                if (head.active) {
+                    ctx.fillStyle = '#FF0000'; // Red color for heads
+                    ctx.beginPath();
+                    ctx.arc(head.x, head.y, head.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw eyes
+                    ctx.fillStyle = '#FFF';
+                    ctx.beginPath();
+                    ctx.arc(head.x - 10, head.y - 5, 5, 0, Math.PI * 2);
+                    ctx.arc(head.x + 10, head.y - 5, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw mouth
+                    ctx.strokeStyle = '#FFF';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(head.x, head.y + 5, 10, 0, Math.PI);
+                    ctx.stroke();
+                }
+            });
+        }
+
+        // Draw arrows
+        function drawArrows() {
+            ctx.fillStyle = '#CD853F'; // Arrow color
+            gameState.bow.arrows.forEach(arrow => {
+                ctx.beginPath();
+                ctx.moveTo(arrow.x, arrow.y);
+                ctx.lineTo(arrow.x + 20, arrow.y - 5);
+                ctx.lineTo(arrow.x + 20, arrow.y + 5);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
+
+        // Draw fireballs
+        function drawFireballs() {
+            gameState.ravana.fireballs.forEach(fireball => {
+                const gradient = ctx.createRadialGradient(
+                    fireball.x, fireball.y, 0,
+                    fireball.x, fireball.y, fireball.radius
+                );
+                gradient.addColorStop(0, '#FF4500');
+                gradient.addColorStop(1, '#FF0000');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(fireball.x, fireball.y, fireball.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Update game state
+        function update() {
+            if (!gameState.gameActive) return;
+
+            const now = Date.now();
+            
+            // Randomly fire fireballs from active heads
+            if (now - gameState.lastFireTime > gameState.ravana.fireRate) {
+                gameState.lastFireTime = now;
+                const activeHeads = gameState.ravana.heads.filter(head => head.active);
+                if (activeHeads.length > 0) {
+                    const randomHead = activeHeads[Math.floor(Math.random() * activeHeads.length)];
+                    gameState.ravana.fireballs.push({
+                        x: randomHead.x,
+                        y: randomHead.y + 20,
+                        radius: 10,
+                        speedX: -3,
+                        speedY: (gameState.bow.y - randomHead.y) / 100
+                    });
+                }
+            }
+            
+            // Update arrows
+            gameState.bow.arrows = gameState.bow.arrows.filter(arrow => {
+                arrow.x += 5;
+                
+                // Check for head hits
+                let hit = false;
+                gameState.ravana.heads.forEach(head => {
+                    if (head.active && !hit) {
+                        const dx = arrow.x - head.x;
+                        const dy = arrow.y - head.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < head.width/2 + 10) {
+                            head.hits++;
+                            if (head.hits >= 3) {
+                                head.active = false;
+                                gameState.headsDefeated++;
+                                scoreElement.textContent = `Heads Remaining: ${gameState.ravana.headCount - gameState.headsDefeated}`;
+                                
+                                if (gameState.headsDefeated >= gameState.ravana.headCount) {
+                                    gameOver(false);
+                                }
+                            }
+                            hit = true;
+                        }
+                    }
+                });
+                
+                return !hit && arrow.x < canvas.width;
+            });
+            
+            // Update fireballs
+            gameState.ravana.fireballs = gameState.ravana.fireballs.filter(fireball => {
+                fireball.x += fireball.speedX;
+                fireball.y += fireball.speedY;
+                
+                // Check for bow hit
+                if (fireball.x < gameState.bow.x + gameState.bow.width && 
+                    fireball.x > gameState.bow.x &&
+                    fireball.y > gameState.bow.y && 
+                    fireball.y < gameState.bow.y + gameState.bow.height) {
+                    
+                    gameState.bow.health -= 10;
+                    healthFill.style.width = `${gameState.bow.health}%`;
+                    
+                    if (gameState.bow.health <= 0) {
+                        gameOver(true);
+                    }
+                    
+                    return false;
+                }
+                
+                return fireball.x > 0 && fireball.x < canvas.width && 
+                       fireball.y > 0 && fireball.y < canvas.height;
+            });
+        }
+
+        // Game over
+        function gameOver(lost) {
+            gameState.gameActive = false;
+            gameOverElement.style.display = 'block';
+            gameOverElement.textContent = lost ? 'YOU LOST!\nRavana Won!' : 'YOU WON!\nRaghupathi Defeated Ravana!';
+            gameOverElement.innerHTML += '<br><button onclick="resetGame()">Play Again</button>';
+        }
+
+        // Reset game
+        function resetGame() {
+            gameState.bow.health = 100;
+            gameState.bow.arrows = [];
+            gameState.ravana.fireballs = [];
+            gameState.headsDefeated = 0;
+            gameState.gameActive = true;
+            healthFill.style.width = '100%';
+            scoreElement.textContent = `Heads Remaining: ${gameState.ravana.headCount}`;
+            gameOverElement.style.display = 'none';
+            initHeads();
+        }
+
+        // Main game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            update();
+            drawBow();
+            drawHeads();
+            drawArrows();
+            drawFireballs();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Handle mouse click (shoot arrow)
+        canvas.addEventListener('click', (e) => {
+            if (gameState.gameActive) {
+                const rect = canvas.getBoundingClientRect();
+                const y = e.clientY - rect.top;
+                
+                gameState.bow.arrows.push({
+                    x: gameState.bow.x + gameState.bow.width,
+                    y: y
+                });
+            }
         });
-      });
-    }
 
-    function drawFireballs() {
-      fireballs = fireballs.filter(f => f.y < canvas.height);
-      ctx.fillStyle = 'orange';
-      fireballs.forEach(f => {
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-        f.y += f.vy;
+        // Handle touch (shoot arrow)
+        canvas.addEventListener('touchstart', (e) => {
+            if (gameState.gameActive) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const y = e.touches[0].clientY - rect.top;
+                
+                gameState.bow.arrows.push({
+                    x: gameState.bow.x + gameState.bow.width,
+                    y: y
+                });
+            }
+        }, { passive: false });
 
-        if (Math.abs(f.x - bow.x) < 20 && Math.abs(f.y - bow.y) < 20) {
-          bowHealth -= 10;
-          f.y = canvas.height + 10; // remove
-        }
-      });
-    }
-
-    function gameLoop() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      drawRavana();
-      drawArrows();
-      drawFireballs();
-      bow.draw();
-
-      document.getElementById('health').innerText = bowHealth;
-
-      if (bowHealth <= 0) {
-        ctx.fillStyle = 'red';
-        ctx.font = '48px sans-serif';
-        ctx.fillText('Game Over', canvas.width / 2 - 100, canvas.height / 2);
-        return;
-      }
-
-      if (ravanaHeads.every(h => h.hp <= 0)) {
-        ctx.fillStyle = 'lime';
-        ctx.font = '48px sans-serif';
-        ctx.fillText('Victory!', canvas.width / 2 - 100, canvas.height / 2);
-        return;
-      }
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') bow.x -= 20;
-      if (e.key === 'ArrowRight') bow.x += 20;
-      if (e.key === ' ' && arrowCooldown <= 0) {
-        arrows.push({ x: bow.x, y: bow.y - 20 });
-        arrowCooldown = 20;
-      }
-    });
-
-    function cooldownTick() {
-      if (arrowCooldown > 0) arrowCooldown--;
-      setTimeout(cooldownTick, 50);
-    }
-
-    cooldownTick();
-    gameLoop();
-  </script>
+        // Initialize and start game
+        initHeads();
+        gameLoop();
+    </script>
 </body>
 </html>
