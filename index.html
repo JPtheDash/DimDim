@@ -3,174 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SwissGoldStocks</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <title>Ravana vs RaghuPathi</title>
   <style>
-    /* YOUR FULL CSS FROM BEFORE REMAINS UNCHANGED */
-    /* Make sure you've already pasted the complete CSS from your last message here */
-    /* It includes styles for :root, body, header, tab-bar, tab, content, and all 4 screens */
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: #222;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <header>
-      <div class="logo">Swiss<span>Gold</span>Stocks</div>
-    </header>
-
-    <div class="content">
-      <!-- Home Screen -->
-      <div id="home-screen">
-        <!-- ... Existing Home Content ... -->
-      </div>
-
-      <!-- History Screen -->
-      <div id="history-screen" class="hidden">
-        <!-- ... Existing History Content ... -->
-      </div>
-
-      <!-- Wallet Screen -->
-      <div id="wallet-screen" class="hidden">
-        <div class="balance-card">
-          <div class="balance-title">Total Balance</div>
-          <div class="balance-amount">$8,945.00</div>
-
-          <div class="metal-balance">
-            <div class="metal-balance-item">
-              <div class="name">Gold</div>
-              <div class="value">$5,600</div>
-              <div class="weight">2.5g</div>
-            </div>
-            <div class="metal-balance-item">
-              <div class="name">Silver</div>
-              <div class="value">$2,100</div>
-              <div class="weight">300g</div>
-            </div>
-            <div class="metal-balance-item">
-              <div class="name">Platinum</div>
-              <div class="value">$1,245</div>
-              <div class="weight">1.1g</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="recent-activity">
-          <h2 class="section-title">Recent Activity</h2>
-
-          <div class="activity-item">
-            <div class="left">
-              <div class="icon"><i class="fas fa-download"></i></div>
-              <div class="details">
-                <div class="type">Gold Purchase</div>
-                <div class="date">Today, 10:45 AM</div>
-              </div>
-            </div>
-            <div class="amount">+$1,845.50</div>
-          </div>
-
-          <div class="activity-item">
-            <div class="left">
-              <div class="icon"><i class="fas fa-upload"></i></div>
-              <div class="details">
-                <div class="type">Silver Sale</div>
-                <div class="date">Yesterday, 2:30 PM</div>
-              </div>
-            </div>
-            <div class="amount">-$1,245.75</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Account Screen -->
-      <div id="account-screen" class="hidden">
-        <div class="profile-header">
-          <div class="profile-avatar">JD</div>
-          <div class="profile-info">
-            <h2>John Doe</h2>
-            <p>john@example.com</p>
-          </div>
-        </div>
-
-        <div class="account-section">
-          <div class="account-item">
-            <div class="left">
-              <div class="icon"><i class="fas fa-user-cog"></i></div>
-              <div class="details">
-                <h3>Profile Settings</h3>
-                <p>Edit personal info</p>
-              </div>
-            </div>
-            <div class="right"><i class="fas fa-chevron-right"></i></div>
-          </div>
-
-          <div class="account-item">
-            <div class="left">
-              <div class="icon"><i class="fas fa-bell"></i></div>
-              <div class="details">
-                <h3>Notifications</h3>
-                <p>Manage alerts</p>
-              </div>
-            </div>
-            <div class="right"><i class="fas fa-chevron-right"></i></div>
-          </div>
-
-          <div class="account-item">
-            <div class="left">
-              <div class="icon"><i class="fas fa-sign-out-alt"></i></div>
-              <div class="details">
-                <h3>Logout</h3>
-              </div>
-            </div>
-          </div>
-
-          <div class="offer-card">
-            <h3>Special Offer!</h3>
-            <p>Get 10% bonus on your next gold purchase. Limited time only.</p>
-            <div class="expiry">Expires: May 20, 2025</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <div class="tab-bar">
-      <div class="tab active" data-target="home-screen">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </div>
-      <div class="tab" data-target="history-screen">
-        <i class="fas fa-history"></i>
-        <span>History</span>
-      </div>
-      <div class="tab" data-target="wallet-screen">
-        <i class="fas fa-wallet"></i>
-        <span>Wallet</span>
-      </div>
-      <div class="tab" data-target="account-screen">
-        <i class="fas fa-user"></i>
-        <span>Account</span>
-      </div>
-    </div>
-  </div>
+  <div id="info">Health: <span id="health">100</span></div>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
 
   <script>
-    const tabs = document.querySelectorAll('.tab');
-    const screens = document.querySelectorAll('.content > div');
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+    let bowHealth = 100;
+    let arrowCooldown = 0;
+    let arrows = [];
+    let fireballs = [];
+    let ravanaHeads = [];
 
-        const target = tab.getAttribute('data-target');
-        screens.forEach(screen => {
-          if (screen.id === target) {
-            screen.classList.remove('hidden');
-          } else {
-            screen.classList.add('hidden');
+    // Initialize Ravana's 10 heads
+    for (let i = 0; i < 10; i++) {
+      ravanaHeads.push({
+        x: 50 + i * 70,
+        y: 50,
+        hp: 3,
+        cooldown: Math.random() * 200 + 100,
+      });
+    }
+
+    const bow = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      draw() {
+        ctx.fillStyle = 'gold';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+        ctx.fill();
+        // health bar
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.x - 25, this.y + 30, 50, 5);
+        ctx.fillStyle = 'lime';
+        ctx.fillRect(this.x - 25, this.y + 30, 50 * (bowHealth / 100), 5);
+      }
+    };
+
+    function drawRavana() {
+      ravanaHeads.forEach((head, i) => {
+        if (head.hp <= 0) return;
+        ctx.fillStyle = 'purple';
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.fillText(head.hp, head.x - 5, head.y + 5);
+
+        head.cooldown -= 1;
+        if (head.cooldown <= 0) {
+          fireballs.push({ x: head.x, y: head.y, vx: 0, vy: 3 });
+          head.cooldown = Math.random() * 200 + 100;
+        }
+      });
+    }
+
+    function drawArrows() {
+      arrows = arrows.filter(a => a.y > 0);
+      ctx.fillStyle = 'cyan';
+      arrows.forEach(a => {
+        ctx.fillRect(a.x - 2, a.y, 4, 10);
+        a.y -= 5;
+      });
+
+      // Collision detection with heads
+      arrows.forEach((a, ai) => {
+        ravanaHeads.forEach(head => {
+          if (head.hp > 0 && Math.abs(head.x - a.x) < 20 && Math.abs(head.y - a.y) < 20) {
+            head.hp--;
+            arrows.splice(ai, 1);
           }
         });
       });
+    }
+
+    function drawFireballs() {
+      fireballs = fireballs.filter(f => f.y < canvas.height);
+      ctx.fillStyle = 'orange';
+      fireballs.forEach(f => {
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        f.y += f.vy;
+
+        if (Math.abs(f.x - bow.x) < 20 && Math.abs(f.y - bow.y) < 20) {
+          bowHealth -= 10;
+          f.y = canvas.height + 10; // remove
+        }
+      });
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawRavana();
+      drawArrows();
+      drawFireballs();
+      bow.draw();
+
+      document.getElementById('health').innerText = bowHealth;
+
+      if (bowHealth <= 0) {
+        ctx.fillStyle = 'red';
+        ctx.font = '48px sans-serif';
+        ctx.fillText('Game Over', canvas.width / 2 - 100, canvas.height / 2);
+        return;
+      }
+
+      if (ravanaHeads.every(h => h.hp <= 0)) {
+        ctx.fillStyle = 'lime';
+        ctx.font = '48px sans-serif';
+        ctx.fillText('Victory!', canvas.width / 2 - 100, canvas.height / 2);
+        return;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') bow.x -= 20;
+      if (e.key === 'ArrowRight') bow.x += 20;
+      if (e.key === ' ' && arrowCooldown <= 0) {
+        arrows.push({ x: bow.x, y: bow.y - 20 });
+        arrowCooldown = 20;
+      }
     });
+
+    function cooldownTick() {
+      if (arrowCooldown > 0) arrowCooldown--;
+      setTimeout(cooldownTick, 50);
+    }
+
+    cooldownTick();
+    gameLoop();
   </script>
 </body>
 </html>
