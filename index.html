@@ -2,30 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>10-Headed Ravana vs Raghupathi</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        body {
             background-color: #111;
             overflow: hidden;
             font-family: 'Arial', sans-serif;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
         #gameCanvas {
             display: block;
-            margin: 0 auto;
+            width: 100%;
+            height: 100%;
             background-color: #000;
-            border: 2px solid #444;
         }
         #healthBar {
             position: absolute;
             top: 10px;
             left: 10px;
-            width: 200px;
-            height: 20px;
+            width: 30%;
+            max-width: 200px;
+            height: 15px;
             background-color: #333;
             border: 1px solid #555;
+            z-index: 10;
         }
         #healthFill {
             height: 100%;
@@ -38,7 +52,9 @@
             top: 10px;
             right: 10px;
             color: white;
-            font-size: 20px;
+            font-size: 14px;
+            z-index: 10;
+            text-shadow: 1px 1px 2px black;
         }
         #gameOver {
             position: absolute;
@@ -46,34 +62,98 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 48px;
+            font-size: 24px;
             text-align: center;
             display: none;
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+        }
+        #gameOver button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+        #shootBtn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        @media (min-width: 768px) {
+            #gameOver {
+                font-size: 36px;
+            }
+            #score {
+                font-size: 20px;
+            }
+            #healthBar {
+                height: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="healthBar">
-        <div id="healthFill"></div>
+    <div id="gameContainer">
+        <div id="healthBar">
+            <div id="healthFill"></div>
+        </div>
+        <div id="score">Heads Remaining: 10</div>
+        <div id="gameOver">GAME OVER<br><button onclick="resetGame()">Play Again</button></div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="controls">
+            <button id="shootBtn">SHOOT ARROW</button>
+        </div>
     </div>
-    <div id="score">Heads Remaining: 10</div>
-    <div id="gameOver">GAME OVER<br><button onclick="resetGame()">Play Again</button></div>
-    <canvas id="gameCanvas" width="800" height="500"></canvas>
 
     <script>
+        // Game setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const healthFill = document.getElementById('healthFill');
         const scoreElement = document.getElementById('score');
         const gameOverElement = document.getElementById('gameOver');
+        const shootBtn = document.getElementById('shootBtn');
+
+        // Set canvas size to full screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Adjust game elements based on screen size
+            gameState.bow.x = canvas.width * 0.1;
+            gameState.bow.y = canvas.height / 2;
+            
+            // Reinitialize heads when screen resizes
+            if (gameState.ravana.heads.length > 0) {
+                initHeads();
+            }
+        }
 
         // Game state
         const gameState = {
             bow: {
-                x: 100,
-                y: canvas.height / 2,
-                width: 40,
-                height: 80,
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
                 health: 100,
                 arrows: []
             },
@@ -85,19 +165,46 @@
             },
             lastFireTime: 0,
             gameActive: true,
-            headsDefeated: 0
+            headsDefeated: 0,
+            baseSizes: {
+                bowWidth: 40,
+                bowHeight: 80,
+                headRadius: 20,
+                arrowLength: 20,
+                fireballRadius: 10
+            }
         };
+
+        // Calculate scaled sizes based on screen dimensions
+        function getScaledSizes() {
+            const scaleFactor = Math.min(canvas.width / 800, canvas.height / 500);
+            
+            return {
+                bowWidth: gameState.baseSizes.bowWidth * scaleFactor,
+                bowHeight: gameState.baseSizes.bowHeight * scaleFactor,
+                headRadius: gameState.baseSizes.headRadius * scaleFactor,
+                arrowLength: gameState.baseSizes.arrowLength * scaleFactor,
+                fireballRadius: gameState.baseSizes.fireballRadius * scaleFactor
+            };
+        }
 
         // Initialize Ravana's heads
         function initHeads() {
             gameState.ravana.heads = [];
-            const headSpacing = (canvas.width - 300) / 9;
+            const sizes = getScaledSizes();
+            
+            // Set bow dimensions
+            gameState.bow.width = sizes.bowWidth;
+            gameState.bow.height = sizes.bowHeight;
+            
+            const headSpacing = (canvas.width * 0.7) / (gameState.ravana.headCount - 1);
+            const startX = canvas.width * 0.3;
+            
             for (let i = 0; i < gameState.ravana.headCount; i++) {
                 gameState.ravana.heads.push({
-                    x: 400 + i * headSpacing,
-                    y: 50 + Math.random() * 50,
-                    width: 40,
-                    height: 40,
+                    x: startX + i * headSpacing,
+                    y: canvas.height * 0.15 + Math.random() * (canvas.height * 0.1),
+                    radius: sizes.headRadius,
                     hits: 0,
                     active: true
                 });
@@ -106,15 +213,27 @@
 
         // Draw bow
         function drawBow() {
+            const sizes = getScaledSizes();
             ctx.fillStyle = '#8B4513'; // Brown color for bow
-            ctx.fillRect(gameState.bow.x, gameState.bow.y, gameState.bow.width, gameState.bow.height);
+            ctx.fillRect(
+                gameState.bow.x, 
+                gameState.bow.y - sizes.bowHeight/2, 
+                sizes.bowWidth, 
+                sizes.bowHeight
+            );
             
             // Draw bow string
             ctx.strokeStyle = '#FFF';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(gameState.bow.x + gameState.bow.width, gameState.bow.y + 10);
-            ctx.lineTo(gameState.bow.x + gameState.bow.width, gameState.bow.y + gameState.bow.height - 10);
+            ctx.moveTo(
+                gameState.bow.x + sizes.bowWidth, 
+                gameState.bow.y - sizes.bowHeight/2 + sizes.bowHeight*0.2
+            );
+            ctx.lineTo(
+                gameState.bow.x + sizes.bowWidth, 
+                gameState.bow.y + sizes.bowHeight/2 - sizes.bowHeight*0.2
+            );
             ctx.stroke();
         }
 
@@ -124,21 +243,39 @@
                 if (head.active) {
                     ctx.fillStyle = '#FF0000'; // Red color for heads
                     ctx.beginPath();
-                    ctx.arc(head.x, head.y, head.width/2, 0, Math.PI * 2);
+                    ctx.arc(head.x, head.y, head.radius, 0, Math.PI * 2);
                     ctx.fill();
                     
                     // Draw eyes
                     ctx.fillStyle = '#FFF';
                     ctx.beginPath();
-                    ctx.arc(head.x - 10, head.y - 5, 5, 0, Math.PI * 2);
-                    ctx.arc(head.x + 10, head.y - 5, 5, 0, Math.PI * 2);
+                    ctx.arc(
+                        head.x - head.radius*0.4, 
+                        head.y - head.radius*0.3, 
+                        head.radius*0.2, 
+                        0, 
+                        Math.PI * 2
+                    );
+                    ctx.arc(
+                        head.x + head.radius*0.4, 
+                        head.y - head.radius*0.3, 
+                        head.radius*0.2, 
+                        0, 
+                        Math.PI * 2
+                    );
                     ctx.fill();
                     
                     // Draw mouth
                     ctx.strokeStyle = '#FFF';
                     ctx.lineWidth = 2;
                     ctx.beginPath();
-                    ctx.arc(head.x, head.y + 5, 10, 0, Math.PI);
+                    ctx.arc(
+                        head.x, 
+                        head.y + head.radius*0.3, 
+                        head.radius*0.4, 
+                        0, 
+                        Math.PI
+                    );
                     ctx.stroke();
                 }
             });
@@ -146,12 +283,13 @@
 
         // Draw arrows
         function drawArrows() {
+            const sizes = getScaledSizes();
             ctx.fillStyle = '#CD853F'; // Arrow color
             gameState.bow.arrows.forEach(arrow => {
                 ctx.beginPath();
                 ctx.moveTo(arrow.x, arrow.y);
-                ctx.lineTo(arrow.x + 20, arrow.y - 5);
-                ctx.lineTo(arrow.x + 20, arrow.y + 5);
+                ctx.lineTo(arrow.x + sizes.arrowLength, arrow.y - sizes.arrowLength*0.3);
+                ctx.lineTo(arrow.x + sizes.arrowLength, arrow.y + sizes.arrowLength*0.3);
                 ctx.closePath();
                 ctx.fill();
             });
@@ -174,11 +312,22 @@
             });
         }
 
+        // Shoot arrow from bow
+        function shootArrow(targetY) {
+            if (!gameState.gameActive) return;
+            
+            gameState.bow.arrows.push({
+                x: gameState.bow.x + getScaledSizes().bowWidth,
+                y: targetY
+            });
+        }
+
         // Update game state
         function update() {
             if (!gameState.gameActive) return;
 
             const now = Date.now();
+            const sizes = getScaledSizes();
             
             // Randomly fire fireballs from active heads
             if (now - gameState.lastFireTime > gameState.ravana.fireRate) {
@@ -188,9 +337,9 @@
                     const randomHead = activeHeads[Math.floor(Math.random() * activeHeads.length)];
                     gameState.ravana.fireballs.push({
                         x: randomHead.x,
-                        y: randomHead.y + 20,
-                        radius: 10,
-                        speedX: -3,
+                        y: randomHead.y + sizes.headRadius,
+                        radius: sizes.fireballRadius,
+                        speedX: -3 * (canvas.width / 800),
                         speedY: (gameState.bow.y - randomHead.y) / 100
                     });
                 }
@@ -198,7 +347,7 @@
             
             // Update arrows
             gameState.bow.arrows = gameState.bow.arrows.filter(arrow => {
-                arrow.x += 5;
+                arrow.x += 5 * (canvas.width / 800);
                 
                 // Check for head hits
                 let hit = false;
@@ -208,7 +357,7 @@
                         const dy = arrow.y - head.y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (distance < head.width/2 + 10) {
+                        if (distance < head.radius + sizes.arrowLength*0.5) {
                             head.hits++;
                             if (head.hits >= 3) {
                                 head.active = false;
@@ -233,10 +382,10 @@
                 fireball.y += fireball.speedY;
                 
                 // Check for bow hit
-                if (fireball.x < gameState.bow.x + gameState.bow.width && 
+                if (fireball.x < gameState.bow.x + sizes.bowWidth && 
                     fireball.x > gameState.bow.x &&
-                    fireball.y > gameState.bow.y && 
-                    fireball.y < gameState.bow.y + gameState.bow.height) {
+                    fireball.y > gameState.bow.y - sizes.bowHeight/2 && 
+                    fireball.y < gameState.bow.y + sizes.bowHeight/2) {
                     
                     gameState.bow.health -= 10;
                     healthFill.style.width = `${gameState.bow.health}%`;
@@ -287,36 +436,56 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Handle mouse click (shoot arrow)
-        canvas.addEventListener('click', (e) => {
-            if (gameState.gameActive) {
-                const rect = canvas.getBoundingClientRect();
-                const y = e.clientY - rect.top;
-                
-                gameState.bow.arrows.push({
-                    x: gameState.bow.x + gameState.bow.width,
-                    y: y
-                });
-            }
-        });
+        // Event listeners
+        function setupEventListeners() {
+            // Shoot button
+            shootBtn.addEventListener('click', () => {
+                shootArrow(gameState.bow.y);
+            });
+            
+            // Touch anywhere to shoot (except controls)
+            canvas.addEventListener('touchstart', (e) => {
+                if (gameState.gameActive) {
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    const y = e.touches[0].clientY - rect.top;
+                    
+                    // Don't shoot if touching controls area
+                    if (y < rect.height - 100) {
+                        shootArrow(y);
+                    }
+                }
+            }, { passive: false });
+            
+            // Mouse click to shoot
+            canvas.addEventListener('click', (e) => {
+                if (gameState.gameActive) {
+                    const rect = canvas.getBoundingClientRect();
+                    const y = e.clientY - rect.top;
+                    
+                    // Don't shoot if clicking controls area
+                    if (y < rect.height - 100) {
+                        shootArrow(y);
+                    }
+                }
+            });
+            
+            // Window resize
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+        }
 
-        // Handle touch (shoot arrow)
-        canvas.addEventListener('touchstart', (e) => {
-            if (gameState.gameActive) {
-                e.preventDefault();
-                const rect = canvas.getBoundingClientRect();
-                const y = e.touches[0].clientY - rect.top;
-                
-                gameState.bow.arrows.push({
-                    x: gameState.bow.x + gameState.bow.width,
-                    y: y
-                });
-            }
-        }, { passive: false });
+        // Initialize game
+        function initGame() {
+            resizeCanvas();
+            setupEventListeners();
+            initHeads();
+            gameLoop();
+        }
 
-        // Initialize and start game
-        initHeads();
-        gameLoop();
+        // Start the game
+        initGame();
     </script>
 </body>
 </html>
