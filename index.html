@@ -81,21 +81,33 @@
             border: none;
             border-radius: 5px;
         }
-        #controls {
+        #powerIndicator {
             position: absolute;
             bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 300px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            display: none;
             z-index: 10;
         }
-        #shootBtn {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #8B4513;
-            color: white;
-            border: none;
+        #powerFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #00ff00, #ff0000);
             border-radius: 5px;
+            transition: width 0.05s;
+        }
+        #directionLine {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            height: 2px;
+            transform-origin: left center;
+            display: none;
+            z-index: 5;
         }
         @media (min-width: 768px) {
             #gameOver {
@@ -117,10 +129,11 @@
         </div>
         <div id="score">Heads Remaining: 10</div>
         <div id="gameOver">GAME OVER<br><button onclick="resetGame()">Play Again</button></div>
-        <canvas id="gameCanvas"></canvas>
-        <div id="controls">
-            <button id="shootBtn">SHOOT ARROW</button>
+        <div id="powerIndicator">
+            <div id="powerFill"></div>
         </div>
+        <div id="directionLine"></div>
+        <canvas id="gameCanvas"></canvas>
     </div>
 
     <script>
@@ -130,7 +143,9 @@
         const healthFill = document.getElementById('healthFill');
         const scoreElement = document.getElementById('score');
         const gameOverElement = document.getElementById('gameOver');
-        const shootBtn = document.getElementById('shootBtn');
+        const powerIndicator = document.getElementById('powerIndicator');
+        const powerFill = document.getElementById('powerFill');
+        const directionLine = document.getElementById('directionLine');
 
         // Set canvas size to full screen
         function resizeCanvas() {
@@ -155,7 +170,8 @@
                 width: 0,
                 height: 0,
                 health: 100,
-                arrows: []
+                arrows: [],
+                loadedArrow: null
             },
             ravana: {
                 heads: [],
@@ -170,8 +186,16 @@
                 bowWidth: 40,
                 bowHeight: 80,
                 headRadius: 20,
-                arrowLength: 20,
+                arrowLength: 30,
                 fireballRadius: 10
+            },
+            aiming: {
+                isAiming: false,
+                startX: 0,
+                startY: 0,
+                power: 0,
+                maxPower: 100,
+                angle: 0
             }
         };
 
@@ -235,6 +259,55 @@
                 gameState.bow.y + sizes.bowHeight/2 - sizes.bowHeight*0.2
             );
             ctx.stroke();
+            
+            // Draw loaded arrow if aiming
+            if (gameState.aiming.isAiming && gameState.bow.loadedArrow) {
+                drawArrow(
+                    gameState.bow.loadedArrow.x, 
+                    gameState.bow.loadedArrow.y, 
+                    gameState.aiming.angle
+                );
+            }
+        }
+
+        // Draw an arrow at position with rotation
+        function drawArrow(x, y, angle) {
+            const sizes = getScaledSizes();
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            
+            // Arrow shaft
+            ctx.fillStyle = '#CD853F';
+            ctx.fillRect(0, -2, sizes.arrowLength, 4);
+            
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(sizes.arrowLength, 0);
+            ctx.lineTo(sizes.arrowLength - 10, -5);
+            ctx.lineTo(sizes.arrowLength - 10, 5);
+            ctx.closePath();
+            ctx.fillStyle = '#B22222';
+            ctx.fill();
+            
+            // Arrow fletching
+            ctx.beginPath();
+            ctx.moveTo(0, -3);
+            ctx.lineTo(-8, -6);
+            ctx.lineTo(-8, 0);
+            ctx.closePath();
+            ctx.fillStyle = '#FFF';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(0, 3);
+            ctx.lineTo(-8, 6);
+            ctx.lineTo(-8, 0);
+            ctx.closePath();
+            ctx.fillStyle = '#FFF';
+            ctx.fill();
+            
+            ctx.restore();
         }
 
         // Draw Ravana's heads
@@ -281,17 +354,10 @@
             });
         }
 
-        // Draw arrows
+        // Draw arrows in flight
         function drawArrows() {
-            const sizes = getScaledSizes();
-            ctx.fillStyle = '#CD853F'; // Arrow color
             gameState.bow.arrows.forEach(arrow => {
-                ctx.beginPath();
-                ctx.moveTo(arrow.x, arrow.y);
-                ctx.lineTo(arrow.x + sizes.arrowLength, arrow.y - sizes.arrowLength*0.3);
-                ctx.lineTo(arrow.x + sizes.arrowLength, arrow.y + sizes.arrowLength*0.3);
-                ctx.closePath();
-                ctx.fill();
+                drawArrow(arrow.x, arrow.y, arrow.angle);
             });
         }
 
@@ -313,13 +379,23 @@
         }
 
         // Shoot arrow from bow
-        function shootArrow(targetY) {
-            if (!gameState.gameActive) return;
+        function shootArrow() {
+            if (!gameState.gameActive || !gameState.bow.loadedArrow) return;
+            
+            const sizes = getScaledSizes();
+            const power = gameState.aiming.power / gameState.aiming.maxPower;
             
             gameState.bow.arrows.push({
-                x: gameState.bow.x + getScaledSizes().bowWidth,
-                y: targetY
+                x: gameState.bow.loadedArrow.x,
+                y: gameState.bow.loadedArrow.y,
+                angle: gameState.aiming.angle,
+                speedX: Math.cos(gameState.aiming.angle) * power * 15,
+                speedY: Math.sin(gameState.aiming.angle) * power * 15
             });
+            
+            gameState.bow.loadedArrow = null;
+            powerIndicator.style.display = 'none';
+            directionLine.style.display = 'none';
         }
 
         // Update game state
@@ -345,9 +421,13 @@
                 }
             }
             
-            // Update arrows
+            // Update arrows in flight
             gameState.bow.arrows = gameState.bow.arrows.filter(arrow => {
-                arrow.x += 5 * (canvas.width / 800);
+                arrow.x += arrow.speedX;
+                arrow.y += arrow.speedY;
+                
+                // Apply gravity
+                arrow.speedY += 0.05;
                 
                 // Check for head hits
                 let hit = false;
@@ -373,7 +453,8 @@
                     }
                 });
                 
-                return !hit && arrow.x < canvas.width;
+                return !hit && arrow.x > 0 && arrow.x < canvas.width && 
+                       arrow.y > 0 && arrow.y < canvas.height;
             });
             
             // Update fireballs
@@ -400,6 +481,15 @@
                 return fireball.x > 0 && fireball.x < canvas.width && 
                        fireball.y > 0 && fireball.y < canvas.height;
             });
+            
+            // Update aiming power if dragging
+            if (gameState.aiming.isAiming) {
+                gameState.aiming.power = Math.min(
+                    gameState.aiming.maxPower,
+                    gameState.aiming.power + 2
+                );
+                powerFill.style.width = `${gameState.aiming.power}%`;
+            }
         }
 
         // Game over
@@ -414,12 +504,16 @@
         function resetGame() {
             gameState.bow.health = 100;
             gameState.bow.arrows = [];
+            gameState.bow.loadedArrow = null;
             gameState.ravana.fireballs = [];
             gameState.headsDefeated = 0;
             gameState.gameActive = true;
+            gameState.aiming.isAiming = false;
             healthFill.style.width = '100%';
             scoreElement.textContent = `Heads Remaining: ${gameState.ravana.headCount}`;
             gameOverElement.style.display = 'none';
+            powerIndicator.style.display = 'none';
+            directionLine.style.display = 'none';
             initHeads();
         }
 
@@ -438,54 +532,40 @@
 
         // Event listeners
         function setupEventListeners() {
-            // Shoot button
-            shootBtn.addEventListener('click', () => {
-                shootArrow(gameState.bow.y);
-            });
+            // Touch start (begin aiming)
+            canvas.addEventListener('touchstart', handleAimStart, { passive: false });
+            canvas.addEventListener('mousedown', handleAimStart);
             
-            // Touch anywhere to shoot (except controls)
-            canvas.addEventListener('touchstart', (e) => {
-                if (gameState.gameActive) {
-                    e.preventDefault();
-                    const rect = canvas.getBoundingClientRect();
-                    const y = e.touches[0].clientY - rect.top;
-                    
-                    // Don't shoot if touching controls area
-                    if (y < rect.height - 100) {
-                        shootArrow(y);
-                    }
-                }
-            }, { passive: false });
-            
-            // Mouse click to shoot
-            canvas.addEventListener('click', (e) => {
-                if (gameState.gameActive) {
-                    const rect = canvas.getBoundingClientRect();
-                    const y = e.clientY - rect.top;
-                    
-                    // Don't shoot if clicking controls area
-                    if (y < rect.height - 100) {
-                        shootArrow(y);
-                    }
-                }
-            });
+            // Touch end (release arrow)
+            canvas.addEventListener('touchend', handleAimEnd, { passive: false });
+            canvas.addEventListener('mouseup', handleAimEnd);
             
             // Window resize
             window.addEventListener('resize', () => {
                 resizeCanvas();
             });
         }
-
-        // Initialize game
-        function initGame() {
-            resizeCanvas();
-            setupEventListeners();
-            initHeads();
-            gameLoop();
-        }
-
-        // Start the game
-        initGame();
-    </script>
-</body>
-</html>
+        
+        function handleAimStart(e) {
+            if (!gameState.gameActive || gameState.bow.loadedArrow) return;
+            
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            
+            // Check if touch is near the bow
+            const sizes = getScaledSizes();
+            if (x > gameState.bow.x - 50 && x < gameState.bow.x + sizes.bowWidth + 50 &&
+                y > gameState.bow.y - sizes.bowHeight/2 - 50 && y < gameState.bow.y + sizes.bowHeight/2 + 50) {
+                
+                gameState.aiming.isAiming = true;
+                gameState.aiming.startX = x;
+                gameState.aiming.startY = y;
+                gameState.aiming.power = 0;
+                
+                // Position loaded arrow at bow
+                gameState.bow.loadedArrow = {
+             
