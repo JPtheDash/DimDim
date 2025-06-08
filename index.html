@@ -1,92 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Demon Head Shooter</title>
-  <style>
-    body {
-      margin: 0;
-      background: #0c0c0c;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-      margin: 0 auto;
-      background: #111;
-      border: 2px solid goldenrod;
-    }
-    h1 {
-      color: gold;
-      text-align: center;
-      margin: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Demon Head Bubble Shooter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        
+        body {
+            background: #1a1a1a;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #d4af37;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #game-canvas {
+            display: block;
+            background: linear-gradient(to bottom, #2a0a0a 0%, #1a1a1a 100%);
+            width: 100%;
+            height: 100%;
+        }
+        
+        #aim {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23d4af37"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><circle cx="12" cy="12" r="5"/></svg>') no-repeat center;
+            background-size: contain;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+        
+        #score-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5em;
+            color: #d4af37;
+            text-shadow: 1px 1px 2px #000;
+            z-index: 10;
+        }
+        
+        @media (max-width: 600px) {
+            #score-display {
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>🏹 Demon Head Shooter</h1>
-  <canvas id="gameCanvas" width="480" height="640"></canvas>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="aim"></div>
+        <div id="score-display">Score: 0</div>
+    </div>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-
-    const bowImg = new Image();
-    bowImg.src = 'images/golden_bow.png'; // replace with your golden bow image
-
-    const demonImgs = [
-      'images/demon1.png',
-      'images/demon2.png',
-      'images/demon3.png'
-    ].map(src => {
-      const img = new Image();
-      img.src = src;
-      return img;
-    });
-
-    let shooterAngle = 0;
-    let currentDemon = demonImgs[Math.floor(Math.random() * demonImgs.length)];
-    let demons = [];
-
-    function drawShooter() {
-      ctx.save();
-      ctx.translate(canvas.width / 2, canvas.height - 40);
-      ctx.rotate(shooterAngle);
-      ctx.drawImage(bowImg, -25, -25, 50, 50);
-      ctx.restore();
-    }
-
-    function drawCurrentDemon() {
-      ctx.drawImage(currentDemon, canvas.width / 2 - 20, canvas.height - 80, 40, 40);
-    }
-
-    function drawDemons() {
-      demons.forEach(d => {
-        ctx.drawImage(d.img, d.x, d.y, 40, 40);
-        d.y -= d.vy;
-      });
-    }
-
-    function gameLoop() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawShooter();
-      drawCurrentDemon();
-      drawDemons();
-      requestAnimationFrame(gameLoop);
-    }
-
-    canvas.addEventListener('click', () => {
-      demons.push({
-        img: currentDemon,
-        x: canvas.width / 2 - 20,
-        y: canvas.height - 80,
-        vy: 3
-      });
-      currentDemon = demonImgs[Math.floor(Math.random() * demonImgs.length)];
-    });
-
-    gameLoop();
-  </script>
-</body>
-</html>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            const aim = document.getElementById('aim');
+            const scoreDisplay = document.getElementById('score-display');
+            
+            // Set canvas to full window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Game variables
+            let score = 0;
+            const bubbleRadius = Math.min(canvas.width * 0.05, canvas.height * 0.05, 30);
+            const rows = 8;
+            const cols = Math.floor(canvas.width / (bubbleRadius * 2));
+            const colors = ['#ff0000', '#990000', '#660000', '#330000'];
+            const demonHeadImages = [];
+            
+            // Preload demon head images
+            for (let i = 0; i < 4; i++) {
+                const img = new Image();
+                img.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="${colors[i]}"/><circle cx="35" cy="40" r="5" fill="white"/><circle cx="65" cy="40" r="5" fill="white"/><path d="M30,65 Q50,80 70,65" stroke="white" stroke-width="3" fill="none"/><path d="M20,20 Q30,0 40,20" stroke="black" stroke-width="2" fill="none"/><path d="M60,20 Q70,0 80,20" stroke="black" stroke-width="2" fill="none"/></svg>`;
+                demonHeadImages.push(img);
+            }
+            
+            // Golden bow image
+            const bowImage = new Image();
+            bowImage.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,50 Q50,10 90,50 Q50,90 10,50" stroke="%23d4af37" stroke-width="8" fill="none"/><path d="M90,50 L70,50" stroke="%23d4af37" stroke-width="4"/></svg>`;
+            
+            // Game board
+            let board = [];
+            let currentBubble = null;
+            let nextBubble = null;
+            let bowAngle = 90;
+            let isShooting = false;
+            let fallingHeads = [];
+            
+            // Initialize game board
+            function initBoard() {
+                board = [];
+                for (let row = 0; row < rows; row++) {
+                    board[row] = [];
+                    for (let col = 0; col < cols; col++) {
+                        if (Math.random() > 0.2) { // 80% chance to have a bubble
+                            board[row][col] = {
+                                type: Math.floor(Math.random() * colors.length),
+                                x: col * bubbleRadius * 2 + (row % 2) * bubbleRadius,
+                                y: row * bubbleRadius * 1.8 + bubbleRadius * 2,
+                                radius: bubbleRadius
+                            };
+                        }
+                    }
+                }
+                
+                currentBubble = {
+                    type: Math.floor(Math.random() * colors.length),
+                    x: canvas.width / 2,
+                    y: canvas.height - bubbleRadius * 2,
+                    radius: bubbleRadius
+                };
+                
+                nextBubble = {
+                    type: Math.floor(Math.random() * colors.length),
+                    x: canvas.width - bubbleRadius * 3,
+                    y: canvas.height - bubbleRadius * 2,
+                    radius: bubbleRadius
+                };
+            }
+            
+            // Draw the game
+            function draw() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw board bubbles
+                for (let row = 0; row < board.length; row++) {
+                    for (let col = 0; col < board[row].length; col++) {
+                        if (board[row][col]) {
+                            const bubble = board[row][col];
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+                            ctx.closePath();
+                            ctx.clip();
+                            ctx.drawImage(demonHeadImages[bubble.type], 
+                                         bubble.x - bubble.radius, 
+                                         bubble.y - bubble.radius, 
+                                         bubble.radius * 2, 
+                                         bubble.radius * 2);
+                            ctx.restore();
+                        }
+                    }
+                }
+                
+                // Draw falling heads
+                for (let i = 0; i < fallingHeads.length; i++) {
+                    const head = fallingHeads[i];
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(head.x, head.y, head.radius, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(demonHeadImages[head.type], 
+                                 head.x - head.radius, 
+                                 head.y - head.radius, 
+                                 head.radius * 2, 
+                                 head.radius * 2);
+                    ctx.restore();
+                }
+                
+                // Draw bow
+                ctx.save();
+                ctx.translate(canvas.width / 2, canvas.height - bubbleRadius);
+                ctx.rotate((bowAngle - 90) * Math.PI / 180);
+                ctx.drawImage(bowImage, -bubbleRadius * 1.5, -bubbleRadius * 2, bubbleRadius * 3, bubbleRadius * 4);
+                ctx.restore();
+                
+                // Draw current bubble
+                if (currentBubble) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(currentBubble.x, currentBubble.y, currentBubble.radius, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(demonHeadImages[currentBubble.type], 
+                                 currentBubble.x - currentBubble.radius, 
+                                 currentBubble.y - currentBubble.radius, 
+                                 currentBubble.radius * 2, 
+                                 currentBubble.radius * 2);
+                    ctx.restore();
+                }
+                
+                // Draw next bubble
+                if (nextBubble) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(nextBubble.x, nextBubble.y, nextBubble.radius, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(demonHeadImages[nextBubble.type], 
+                                 nextBubble.x - nextBubble.radius, 
+                                 nextBubble.y - nextBubble.radius, 
+                                 nextBubble.radius * 2, 
+                                 nextBubble.radius * 2);
+                    ctx.restore();
+                    
+                    // Draw "Next" label
+                    ctx.fillStyle = '#d4af37';
+                    ctx.font = `${bubbleRadius * 0.6}px Arial`;
+                    ctx.fillText('Next:', nextBubble.x - bubbleRadius * 1.5, nextBubble.y - bubbleRadius * 1.5);
+                }
+            }
+            
+            // Shoot bubble
+            function shootBubble() {
+                if (isShooting) return;
+                isShooting = true;
+                
+                const angle = bowAngle * Math.PI / 180;
+                const speed = 10;
+                const dx = Math.cos(angle) * speed;
+                const dy = -Math.sin(angle) * speed;
+                
+                const bubble = {
+                    x: currentBubble.x,
+                    y: currentBubble.y,
+                    radius: currentBubble.radius,
+                    type: currentBubble.type,
+                    dx: dx,
+                    dy: dy
+                };
+                
+                function animate() {
+                    // Move bubble
+                    bubble.x += bubble.dx;
+                    bubble.y += bubble.dy;
+                    
+                    // Check wall collision
+                    if (bubble.x - bubble.radius < 0 || bubble.x + bubble.radius > canvas.width) {
+                        bubble.dx = -bubble.dx;
+                    }
+                    
+                    // Check ceiling collision
+                    if (bubble.y - bubble.radius < 0) {
+                        bubble.y = bubble.radius;
+                        placeBubble(bubble);
+                        return;
+                    }
+                    
+                    // Check bubble collision
+                    const collidedBubble = checkCollision(bubble);
+                    if (collidedBubble) {
+                        placeBubble(bubble, collidedBubble);
+                        return;
+                    }
+                    
+                    // Continue animation if not placed
+                    if (bubble.y < canvas.height) {
+                        requestAnimationFrame(animate);
+                        draw();
+                    }
+                }
+                
+                animate();
+            }
+            
+            // Check collision with other bubbles
+            function checkCollision(bubble) {
+                for (let row = board.length - 1; row >= 0; row--) {
+                    for (let col = 0; col < board[row].length; col++) {
+                        if (board[row][col]) {
+                            const boardBubble = board[row][col];
+                            const dx = bubble.x - boardBubble.x;
+                            const dy = bubble.y - boardBubble.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < bubble.radius + boardBubble.radius) {
+                                return boardBubble;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            
+            // Place bubble on board
+            function placeBubble(bubble, collidedBubble = null) {
+                let row, col;
+                
+                if (collidedBubble) {
+                    // Find position next to collided bubble
+                    for (row = 0; row < board.length; row++) {
+                        for (col = 0; col < board[row].length; col++) {
+                            if (board[row][col] === collidedBubble) {
+                                // Try to place in adjacent position
+                                const offset = row % 2 ? 0 : 1;
+                                const positions = [
+                                    {r: row, c: col - 1},
+                                    {r: row, c: col + 1},
+                                    {r: row - 1, c: col - 1 + offset},
+                                    {r: row - 1, c: col + offset},
+                                    {r: row + 1, c: col - 1 + offset},
+                                    {r: row + 1, c: col + offset}
+                                ];
+                                
+                                for (const pos of positions) {
+                                    if (pos.r >= 0 && pos.r < board.length && 
+                                        pos.c >= 0 && pos.c < board[pos.r].length && 
+                                        !board[pos.r][pos.c]) {
+                                        board[pos.r][pos.c] = {
+                                            type: bubble.type,
+                                            x: pos.c * bubbleRadius * 2 + (pos.r % 2) * bubbleRadius,
+                                            y: pos.r * bubbleRadius * 1.8 + bubbleRadius * 2,
+                                            radius: bubbleRadius
+                                        };
+                                        checkMatches(pos.r, pos.c);
+                                        isShooting = false;
+                                        prepareNextBubble();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // If no adjacent spot found, find closest empty spot in bottom row
+                for (row = board.length - 1; row >= 0; row--) {
+                    for (col = 0; col < board[row].length; col++) {
+                        if (!board[row][col]) {
+                            board[row][col] = {
+                                type: bubble.type,
+                                x: col * bubbleRadius * 2 + (row % 2) * bubbleRadius,
+                                y: row * bubbleRadius * 1.8 + bubbleRadius * 2,
+                                radius: bubbleRadius
+                            };
+                            checkMatches(row, col);
+                            isShooting = false;
+                            prepareNextBubble();
+                            return;
+                        }
+                    }
+                }
+                
+                // If no spots found, game over
+                gameOver();
+            }
+            
+            // Check for matching bubbles
+            function checkMatches(row, col) {
+                const type = board[row][col].type;
+                const matches = [];
+                const checked = Array(rows).fill().map(() => Array(cols).fill(false));
+                
+                function checkAdjacent(r, c) {
+                    if (r < 0 || r >= rows || c < 0 || c >= cols || checked[r][c] || !board[r][c] || board[r][c].type !== type) {
+                        return;
+                    }
+                    
+                    checked[r][c] = true;
+                    matches.push({row: r, col: c});
+                    
+                    const offset = r % 2 ? 0 : 1;
+                    checkAdjacent(r, c - 1);
+                    checkAdjacent(r, c + 1);
+                    checkAdjacent(r - 1, c - 1 + offset);
+                    checkAdjacent(r - 1, c + offset);
+                    checkAdjacent(r + 1, c - 1 + offset);
+                    checkAdjacent(r + 1, c + offset);
+                }
+                
+                checkAdjacent(row, col);
+                
+                if (matches.length >= 3) {
+                    // Remove matched bubbles and add falling animation
+                    for (const match of matches) {
+                        const bubble = board[match.row][match.col];
+                        fallingHeads.push({
+                            x: bubble.x,
+                            y: bubble.y,
+                            radius: bubble.radius,
+                            type: bubble.type,
+                            dy: 5 + Math.random() * 3,
+                            rotation: Math.random() * Math.PI * 2,
+                            rotationSpeed: (Math.random() - 0.5) * 0.1
+                        });
+                        board[match.row][match.col] = null;
+                    }
+                    
+                    // Update score
+                    score += matches.length * 10;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    
+                    // Animate falling heads
+                    function animateFalling() {
+                        let allDone = true;
+                        
+                        for (let i = fallingHeads.length - 1; i >= 0; i--) {
+                            const head = fallingHeads[i];
+                            head.y += head.dy;
+                            head.rotation += head.rotationSpeed;
+                            
+                            if (head.y < canvas.height + head.radius) {
+                                allDone = false;
+                            } else {
+                                fallingHeads.splice(i, 1);
+                            }
+                        }
+                        
+                        if (!allDone) {
+                            requestAnimationFrame(animateFalling);
+                        }
+                        
+                        draw();
+                    }
+                    
+                    animateFalling();
+                }
+            }
+            
+            // Prepare next bubble
+            function prepareNextBubble() {
+                currentBubble = {
+                    type: nextBubble.type,
+                    x: canvas.width / 2,
+                    y: canvas.height - bubbleRadius * 2,
+                    radius: bubbleRadius
+                };
+                
+                nextBubble = {
+                    type: Math.floor(Math.random() * colors.length),
+                    x: canvas.width - bubbleRadius * 3,
+                    y: canvas.height - bubbleRadius * 2,
+                    radius: bubbleRadius
+                };
+            }
+            
+            // Game over
+            function gameOver() {
+                alert(`Game Over! Your score: ${score}`);
+                initBoard();
+                score = 0;
+                scoreDisplay.textContent = `Score: ${score}`;
+                isShooting = false;
+            }
+            
+            // Handle touch/mouse events
+            function handleMove(e) {
+                let clientX, clientY;
+                
+                if (e.touches) {
+                    clientX = e.touch
