@@ -1,68 +1,434 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>Demon Bubble Shooter</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;touch-action:manipulation}
-body{background:#1a1a1a;overflow:hidden;font-family:Arial;color:#d4af37;position:fixed;width:100%;height:100%}
-#game-container{position:relative;width:100%;height:100%}
-#game-canvas{display:block;background:linear-gradient(#2a0a0a,#1a1a1a);width:100%;height:100%}
-#aim{position:absolute;width:60px;height:60px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/><circle cx='12' cy='12' r='5'/></svg>") no-repeat center/contain;pointer-events:none;z-index:10;display:none}
-#score{position:absolute;top:10px;left:10px;font-size:1.5em;color:#d4af37;text-shadow:1px 1px 2px #000;z-index:10}
-@media(max-width:600px){#score{font-size:1.2em}}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    touch-action: manipulation;
+  }
+  body {
+    background: #1a1a1a;
+    overflow: hidden;
+    font-family: Arial;
+    color: #d4af37;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+  #game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  #game-canvas {
+    display: block;
+    background: linear-gradient(#2a0a0a, #1a1a1a);
+    width: 100%;
+    height: 100%;
+  }
+  #aim {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/><circle cx='12' cy='12' r='5'/></svg>") no-repeat center/contain;
+    pointer-events: none;
+    z-index: 10;
+    display: none;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5em;
+    color: #d4af37;
+    text-shadow: 1px 1px 2px #000;
+    z-index: 10;
+  }
+  @media (max-width: 600px) {
+    #score {
+      font-size: 1.2em;
+    }
+  }
 </style>
 </head>
 <body>
-<div id="game-container">
-<canvas id="game-canvas"></canvas>
-<div id="aim"></div>
-<div id="score">Score: 0</div>
-</div>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    <div id="aim"></div>
+    <div id="score">Score: 0</div>
+  </div>
 
-<script>
-(()=>{
-const c=document.getElementById('game-canvas'),x=c.getContext('2d'),a=document.getElementById('aim'),s=document.getElementById('score');
-function r(){c.width=window.innerWidth,c.height=window.innerHeight}r(),window.addEventListener('resize',r);
-let p=0,b=Math.min(c.width*0.05,c.height*0.05,30),w=8,d=Math.floor(c.width/(b*2)),h=['#f00','#900','#600','#300'],m=[],y=new Image;
-for(let i=0;i<4;i++){let e=new Image;e.src=`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='${h[i]}'/><circle cx='35' cy='40' r='5' fill='white'/><circle cx='65' cy='40' r='5' fill='white'/><path d='M30,65 Q50,80 70,65' stroke='white' stroke-width='3' fill='none'/><path d='M20,20 Q30,0 40,20' stroke='black' stroke-width='2' fill='none'/><path d='M60,20 Q70,0 80,20' stroke='black' stroke-width='2' fill='none'/></svg>`,m.push(e)}
-y.src=`data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M10,50 Q50,10 90,50 Q50,90 10,50' stroke='%23d4af37' stroke-width='8' fill='none'/><path d='M90,50 L70,50' stroke='%23d4af37' stroke-width='4'/></svg>`;
-let g=[],u=null,n=null,o=90,t=!1,f=[];
-function i(){g=[];for(let e=0;e<w;e++){g[e]=[];for(let l=0;l<d;l++)Math.random()>0.2&&(g[e][l]={type:Math.floor(4*Math.random()),x:2*l*b+(e%2)*b,y:1.8*e*b+2*b,r:b})}u={type:Math.floor(4*Math.random()),x:c.width/2,y:c.height-2*b,r:b},n={type:Math.floor(4*Math.random()),x:c.width-3*b,y:c.height-2*b,r:b},v()}
-function v(){x.clearRect(0,0,c.width,c.height);for(let e=0;e<g.length;e++)for(let l=0;l<g[e].length;l++)if(g[e][l]){let _=g[e][l];x.save(),x.beginPath(),x.arc(_.x,_.y,_.r,0,2*Math.PI),x.closePath(),x.clip(),m[_.type].complete?x.drawImage(m[_.type],_.x-_.r,_.y-_.r,2*_.r,2*_.r):(x.fillStyle=h[_.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(_.x,_.y,_.r,0,2*Math.PI),x.stroke()}
-for(let e=0;e<f.length;e++){let l=f[e];x.save(),x.translate(l.x,l.y),x.rotate(l.k),x.beginPath(),x.arc(0,0,l.r,0,2*Math.PI),x.closePath(),x.clip(),m[l.type].complete?x.drawImage(m[l.type],-l.r,-l.r,2*l.r,2*l.r):(x.fillStyle=h[l.type],x.fill()),x.restore(),x.save(),x.translate(l.x,l.y),x.rotate(l.k),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(0,0,l.r,0,2*Math.PI),x.stroke(),x.restore()}
-y.complete&&(x.save(),x.translate(c.width/2,c.height-b),x.rotate((o-90)*Math.PI/180),x.drawImage(y,-1.5*b,-2*b,3*b,4*b),x.restore());
-u&&(x.save(),x.beginPath(),x.arc(u.x,u.y,u.r,0,2*Math.PI),x.closePath(),x.clip(),m[u.type].complete?x.drawImage(m[u.type],u.x-u.r,u.y-u.r,2*u.r,2*u.r):(x.fillStyle=h[u.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(u.x,u.y,u.r,0,2*Math.PI),x.stroke());
-n&&(x.save(),x.beginPath(),x.arc(n.x,n.y,n.r,0,2*Math.PI),x.closePath(),x.clip(),m[n.type].complete?x.drawImage(m[n.type],n.x-n.r,n.y-n.r,2*n.r,2*n.r):(x.fillStyle=h[n.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(n.x,n.y,n.r,0,2*Math.PI),x.stroke(),x.fillStyle='#d4af37',x.font=.6*b+'px Arial',x.fillText('Next:',n.x-1.5*b,n.y-1.5*b))}
-function k(){if(t || !u)return;t=!0;let e=o*Math.PI/180,l=10,_=Math.cos(e)*l,j=-Math.sin(e)*l,A={x:u.x,y:u.y,r:u.r,type:u.type,dx:_,dy:j};
-function C(){A.x+=A.dx,A.y+=A.dy,A.x-A.r<0||A.x+A.r>c.width&&(A.dx*=-1),A.y-A.r<0&&(A.y=A.r,q(A));let E=S(A);E&&q(A,E);if(A.y<c.height){v(),x.save(),x.beginPath(),x.arc(A.x,A.y,A.r,0,2*Math.PI),x.closePath(),x.clip(),m[A.type].complete?x.drawImage(m[A.type],A.x-A.r,A.y-A.r,2*A.r,2*A.r):(x.fillStyle=h[A.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(A.x,A.y,A.r,0,2*Math.PI),x.stroke(),requestAnimationFrame(C)}}C()}
-function S(e){for(let l=g.length-1;l>=0;l--)for(let _=0;_<g[l].length;_++)if(g[l][_]){let j=g[l][_],A=e.x-j.x,C=e.y-j.y,E=Math.sqrt(A*A+C*C);if(E<e.r+j.r)return j}return null}
-function q(e,l=null){let _=0,j=0;if(l)for(let A=0;A<g.length;A++)for(let C=0;C<g[A].length;C++)if(g[A][C]===l){let E=A%2?0:1,T=[{r:A,c:C-1},{r:A,c:C+1},{r:A-1,c:C-1+E},{r:A-1,c:C+E},{r:A+1,c:C-1+E},{r:A+1,c:C+E}];for(let I of T)if(I.r>=0&&I.r<g.length&&I.c>=0&&I.c<g[I.r].length&&!g[I.r][I.c])return g[I.r][I.c]={type:e.type,x:2*I.c*b+(I.r%2)*b,y:1.8*I.r*b+2*b,r:b},z(I.r,I.c),t=!1,D(),v(),void 0}
-for(_=g.length-1;_>=0;_--)for(j=0;j<g[_].length;j++)if(!g[_][j])return g[_][j]={type:e.type,x:2*j*b+(_%2)*b,y:1.8*_*b+2*b,r:b},z(_,j),t=!1,D(),v(),void 0;L()}
-function z(e,l){let _=g[e][l].type,j=[],A=Array(w).fill().map(()=>Array(d).fill(!1));
-function C(E,T){if(E<0||E>=w||T<0||T>=d||A[E][T]||!g[E][T]||g[E][T].type!==_)return;A[E][T]=!0,j.push({row:E,col:T});let I=E%2?0:1;C(E,T-1),C(E,T+1),C(E-1,T-1+I),C(E-1,T+I),C(E+1,T-1+I),C(E+1,T+I)}C(e,l);
-j.length>=3&&(j.forEach(E=>{let T=g[E.row][E.col];f.push({x:T.x,y:T.y,r:T.r,type:T.type,dy:5+3*Math.random(),k:2*Math.PI*Math.random(),ks:.1*(Math.random()-.5)}),g[E.row][E.col]=null}),p+=10*j.length,s.textContent=`Score: ${p}`,
-function E(){let T=!0;for(let I=f.length-1;I>=0;I--){let M=f[I];M.y+=M.dy,M.k+=M.ks,M.y<c.height+M.r?T=!1:f.splice(I,1)}v(),T||requestAnimationFrame(E)}())}
-function D(){u={type:n.type,x:c.width/2,y:c.height-2*b,r:b},n={type:Math.floor(4*Math.random()),x:c.width-3*b,y:c.height-2*b,r:b},v()}
-function L(){alert(`Game Over! Score: ${p}`),i(),p=0,s.textContent=`Score: ${p}`,t=!1}
-function B(E){let T = E.touches ? E.touches[0].clientX : E.clientX,
-               I = E.touches ? E.touches[0].clientY : E.clientY,
-               M = c.getBoundingClientRect(),
-               F = T - M.left - c.width / 2,
-               R = c.height - b - (I - M.top);
-  if (F === 0 && R === 0) return; // Avoid NaN angle
-  let angle = Math.atan2(R, F) * 180 / Math.PI;
-  if (!isNaN(angle)) {
-    o = Math.max(10, Math.min(170, angle));
-  }
-  a.style.left = T - 30 + 'px';
-  a.style.top = I - 30 + 'px';
-  a.style.display = 'block';
-  v();
-}
-function P(E){E.touches&&E.preventDefault();k();a.style.display='none'}
-c.addEventListener('mousemove',B),c.addEventListener('touchmove',B,{passive:!1}),c.addEventListener('click',P),c.addEventListener('touchend',P),c.addEventListener('mouseleave',()=>{a.style.display='none',v()}),i()})();
-</script>
+  <script>
+    (() => {
+      const c = document.getElementById('game-canvas'),
+        x = c.getContext('2d'),
+        a = document.getElementById('aim'),
+        s = document.getElementById('score');
+
+      function r() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+      }
+      r();
+      window.addEventListener('resize', r);
+
+      let p = 0,
+        b = Math.min(c.width * 0.05, c.height * 0.05, 30),
+        w = 8,
+        d = Math.floor(c.width / (b * 2)),
+        h = ['#f00', '#900', '#600', '#300'],
+        m = [],
+        y = new Image;
+
+      for (let i = 0; i < 4; i++) {
+        let e = new Image;
+        e.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='${h[i]}'/><circle cx='35' cy='40' r='5' fill='white'/><circle cx='65' cy='40' r='5' fill='white'/><path d='M30,65 Q50,80 70,65' stroke='white' stroke-width='3' fill='none'/><path d='M20,20 Q30,0 40,20' stroke='black' stroke-width='2' fill='none'/><path d='M60,20 Q70,0 80,20' stroke='black' stroke-width='2' fill='none'/></svg>`;
+        m.push(e);
+      }
+
+      y.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M10,50 Q50,10 90,50 Q50,90 10,50' stroke='%23d4af37' stroke-width='8' fill='none'/><path d='M90,50 L70,50' stroke='%23d4af37' stroke-width='4'/></svg>`;
+
+      let g = [],
+        u = null,
+        n = null,
+        o = 90,
+        t = false,
+        f = [];
+
+      function i() {
+        g = [];
+        for (let e = 0; e < w; e++) {
+          g[e] = [];
+          for (let l = 0; l < d; l++)
+            Math.random() > 0.2 &&
+              (g[e][l] = {
+                type: Math.floor(4 * Math.random()),
+                x: 2 * l * b + (e % 2) * b,
+                y: 1.8 * e * b + 2 * b,
+                r: b,
+              });
+        }
+        u = { type: Math.floor(4 * Math.random()), x: c.width / 2, y: c.height - 2 * b, r: b };
+        n = { type: Math.floor(4 * Math.random()), x: c.width - 3 * b, y: c.height - 2 * b, r: b };
+        v();
+      }
+
+      function v() {
+        x.clearRect(0, 0, c.width, c.height);
+
+        for (let e = 0; e < g.length; e++) {
+          for (let l = 0; l < g[e].length; l++) {
+            if (g[e][l]) {
+              let _ = g[e][l];
+              x.save();
+              x.beginPath();
+              x.arc(_.x, _.y, _.r, 0, 2 * Math.PI);
+              x.closePath();
+              x.clip();
+              m[_.type].complete
+                ? x.drawImage(m[_.type], _.x - _.r, _.y - _.r, 2 * _.r, 2 * _.r)
+                : ((x.fillStyle = h[_.type]), x.fill());
+              x.restore();
+              x.strokeStyle = '#000';
+              x.lineWidth = 2;
+              x.beginPath();
+              x.arc(_.x, _.y, _.r, 0, 2 * Math.PI);
+              x.stroke();
+            }
+          }
+        }
+
+        for (let e = 0; e < f.length; e++) {
+          let l = f[e];
+          x.save();
+          x.translate(l.x, l.y);
+          x.rotate(l.k);
+          x.beginPath();
+          x.arc(0, 0, l.r, 0, 2 * Math.PI);
+          x.closePath();
+          x.clip();
+          m[l.type].complete
+            ? x.drawImage(m[l.type], -l.r, -l.r, 2 * l.r, 2 * l.r)
+            : ((x.fillStyle = h[l.type]), x.fill());
+          x.restore();
+          x.save();
+          x.translate(l.x, l.y);
+          x.rotate(l.k);
+          x.strokeStyle = '#000';
+          x.lineWidth = 2;
+          x.beginPath();
+          x.arc(0, 0, l.r, 0, 2 * Math.PI);
+          x.stroke();
+          x.restore();
+        }
+
+        if (y.complete) {
+          x.save();
+          x.translate(c.width / 2, c.height - b);
+          x.rotate(((o - 90) * Math.PI) / 180);
+          x.drawImage(y, -1.5 * b, -2 * b, 3 * b, 4 * b);
+          x.restore();
+        }
+
+        if (u) {
+          x.save();
+          x.beginPath();
+          x.arc(u.x, u.y, u.r, 0, 2 * Math.PI);
+          x.closePath();
+          x.clip();
+          m[u.type].complete
+            ? x.drawImage(m[u.type], u.x - u.r, u.y - u.r, 2 * u.r, 2 * u.r)
+            : ((x.fillStyle = h[u.type]), x.fill());
+          x.restore();
+          x.strokeStyle = '#000';
+          x.lineWidth = 2;
+          x.beginPath();
+          x.arc(u.x, u.y, u.r, 0, 2 * Math.PI);
+          x.stroke();
+        }
+
+        if (n) {
+          x.save();
+          x.beginPath();
+          x.arc(n.x, n.y, n.r, 0, 2 * Math.PI);
+          x.closePath();
+          x.clip();
+          m[n.type].complete
+            ? x.drawImage(m[n.type], n.x - n.r, n.y - n.r, 2 * n.r, 2 * n.r)
+            : ((x.fillStyle = h[n.type]), x.fill());
+          x.restore();
+          x.strokeStyle = '#000';
+          x.lineWidth = 2;
+          x.beginPath();
+          x.arc(n.x, n.y, n.r, 0, 2 * Math.PI);
+          x.stroke();
+          x.fillStyle = '#d4af37';
+          x.font = 0.6 * b + 'px Arial';
+          x.fillText('Next:', n.x - 1.5 * b, n.y - 1.5 * b);
+        }
+      }
+
+      function k() {
+        if (t || !u) return;
+        t = true;
+        let e = (o * Math.PI) / 180,
+          l = 10,
+          _ = Math.cos(e) * l,
+          j = -Math.sin(e) * l,
+          A = { x: u.x, y: u.y, r: u.r, type: u.type, dx: _, dy: j };
+
+        function C() {
+          A.x += A.dx;
+          A.y += A.dy;
+          if (A.x - A.r < 0 || A.x + A.r > c.width) A.dx *= -1;
+          if (A.y - A.r < 0) {
+            A.y = A.r;
+            q(A);
+          }
+          let E = S(A);
+          if (E) q(A, E);
+          if (A.y < c.height) {
+            v();
+            x.save();
+            x.beginPath();
+            x.arc(A.x, A.y, A.r, 0, 2 * Math.PI);
+            x.closePath();
+            x.clip();
+            m[A.type].complete
+              ? x.drawImage(m[A.type], A.x - A.r, A.y - A.r, 2 * A.r, 2 * A.r)
+              : ((x.fillStyle = h[A.type]), x.fill());
+            x.restore();
+            x.strokeStyle = '#000';
+            x.lineWidth = 2;
+            x.beginPath();
+            x.arc(A.x, A.y, A.r, 0, 2 * Math.PI);
+            x.stroke();
+            requestAnimationFrame(C);
+          }
+        }
+        C();
+      }
+
+      function S(e) {
+        for (let l = g.length - 1; l >= 0; l--)
+          for (let _ = 0; _ < g[l].length; _++)
+            if (g[l][_]) {
+              let j = g[l][_],
+                A = e.x - j.x,
+                C = e.y - j.y,
+                E = Math.sqrt(A * A + C * C);
+              if (E < e.r + j.r) return j;
+            }
+        return null;
+      }
+
+      function q(e, l = null) {
+        let _ = 0,
+          j = 0;
+        if (l)
+          for (let A = 0; A < g.length; A++)
+            for (let C = 0; C < g[A].length; C++)
+              if (g[A][C] === l) {
+                let E = A % 2 ? 0 : 1,
+                  T = [
+                    { r: A, c: C - 1 },
+                    { r: A, c: C + 1 },
+                    { r: A - 1, c: C - 1 + E },
+                    { r: A - 1, c: C + E },
+                    { r: A + 1, c: C - 1 + E },
+                    { r: A + 1, c: C + E },
+                  ];
+                for (let I of T)
+                  if (
+                    I.r >= 0 &&
+                    I.r < g.length &&
+                    I.c >= 0 &&
+                    I.c < g[I.r].length &&
+                    !g[I.r][I.c]
+                  )
+                    return (
+                      (g[I.r][I.c] = {
+                        type: e.type,
+                        x: 2 * I.c * b + (I.r % 2) * b,
+                        y: 1.8 * I.r * b + 2 * b,
+                        r: b,
+                      }),
+                      z(I.r, I.c),
+                      (t = false),
+                      D(),
+                      v(),
+                      void 0
+                    );
+              }
+        for (_ = g.length - 1; _ >= 0; _--)
+          for (j = 0; j < g[_].length; j++)
+            if (!g[_][j])
+              return (
+                (g[_][j] = {
+                  type: e.type,
+                  x: 2 * j * b + (_ % 2) * b,
+                  y: 1.8 * _ * b + 2 * b,
+                  r: b,
+                }),
+                z(_, j),
+                (t = false),
+                D(),
+                v(),
+                void 0
+              );
+        L();
+      }
+
+      function z(e, l) {
+        let _ = g[e][l].type,
+          j = [],
+          A = Array(w)
+            .fill()
+            .map(() => Array(d).fill(false));
+        function C(E, T) {
+          if (
+            E < 0 ||
+            E >= w ||
+            T < 0 ||
+            T >= d ||
+            A[E][T] ||
+            !g[E][T] ||
+            g[E][T].type !== _
+          )
+            return;
+          A[E][T] = true;
+          j.push({ row: E, col: T });
+          let I = E % 2 ? 0 : 1;
+          C(E, T - 1);
+          C(E, T + 1);
+          C(E - 1, T - 1 + I);
+          C(E - 1, T + I);
+          C(E + 1, T - 1 + I);
+          C(E + 1, T + I);
+        }
+        C(e, l);
+        if (j.length >= 3) {
+          j.forEach((E) => {
+            let T = g[E.row][E.col];
+            f.push({
+              x: T.x,
+              y: T.y,
+              r: T.r,
+              type: T.type,
+              dy: 5 + 3 * Math.random(),
+              k: 2 * Math.PI * Math.random(),
+              ks: 0.1 * (Math.random() - 0.5),
+            });
+            g[E.row][E.col] = null;
+          });
+          p += 10 * j.length;
+          s.textContent = `Score: ${p}`;
+          (function E() {
+            let T = true;
+            for (let I = f.length - 1; I >= 0; I--) {
+              let M = f[I];
+              (M.y += M.dy), (M.k += M.ks), M.y < c.height + M.r ? (T = false) : f.splice(I, 1);
+            }
+            v();
+            T || requestAnimationFrame(E);
+          })();
+        }
+      }
+
+      function D() {
+        u = { type: n.type, x: c.width / 2, y: c.height - 2 * b, r: b };
+        n = { type: Math.floor(4 * Math.random()), x: c.width - 3 * b, y: c.height - 2 * b, r: b };
+        v();
+      }
+
+      function L() {
+        alert(`Game Over! Score: ${p}`);
+        i();
+        p = 0;
+        s.textContent = `Score: ${p}`;
+        t = false;
+      }
+
+      function B(E) {
+        let T = E.touches ? E.touches[0].clientX : E.clientX,
+          I = E.touches ? E.touches[0].clientY : E.clientY,
+          M = c.getBoundingClientRect(),
+          F = T - M.left - c.width / 2,
+          R = c.height - b - (I - M.top);
+        if (F === 0 && R === 0) return; // Avoid NaN angle
+        let angle = Math.atan2(R, F) * (180 / Math.PI);
+        if (!isNaN(angle)) {
+          o = Math.max(10, Math.min(170, angle));
+        }
+        a.style.left = T - 30 + 'px';
+        a.style.top = I - 30 + 'px';
+        a.style.display = 'block';
+        v();
+      }
+
+      function P(e) {
+        if (e.touches) e.preventDefault(); // Prevent scrolling/flicker on touch
+        k();
+        a.style.display = 'none';
+        // Don't call v() here; the animation loop handles drawing continuously
+      }
+
+      c.addEventListener('mousemove', B);
+      c.addEventListener('touchmove', B, { passive: false });
+      c.addEventListener('click', P);
+      c.addEventListener('touchend', P, { passive: false });
+      c.addEventListener('mouseleave', () => {
+        a.style.display = 'none';
+        v();
+      });
+
+      i();
+    })();
+  </script>
 </body>
 </html>
