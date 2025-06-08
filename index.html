@@ -35,7 +35,7 @@ for(let e=0;e<f.length;e++){let l=f[e];x.save(),x.translate(l.x,l.y),x.rotate(l.
 y.complete&&(x.save(),x.translate(c.width/2,c.height-b),x.rotate((o-90)*Math.PI/180),x.drawImage(y,-1.5*b,-2*b,3*b,4*b),x.restore());
 u&&(x.save(),x.beginPath(),x.arc(u.x,u.y,u.r,0,2*Math.PI),x.closePath(),x.clip(),m[u.type].complete?x.drawImage(m[u.type],u.x-u.r,u.y-u.r,2*u.r,2*u.r):(x.fillStyle=h[u.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(u.x,u.y,u.r,0,2*Math.PI),x.stroke());
 n&&(x.save(),x.beginPath(),x.arc(n.x,n.y,n.r,0,2*Math.PI),x.closePath(),x.clip(),m[n.type].complete?x.drawImage(m[n.type],n.x-n.r,n.y-n.r,2*n.r,2*n.r):(x.fillStyle=h[n.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(n.x,n.y,n.r,0,2*Math.PI),x.stroke(),x.fillStyle='#d4af37',x.font=.6*b+'px Arial',x.fillText('Next:',n.x-1.5*b,n.y-1.5*b))}
-function k(){if(t)return;t=!0;let e=o*Math.PI/180,l=10,_=Math.cos(e)*l,j=-Math.sin(e)*l,A={x:u.x,y:u.y,r:u.r,type:u.type,dx:_,dy:j};
+function k(){if(t || !u)return;t=!0;let e=o*Math.PI/180,l=10,_=Math.cos(e)*l,j=-Math.sin(e)*l,A={x:u.x,y:u.y,r:u.r,type:u.type,dx:_,dy:j};
 function C(){A.x+=A.dx,A.y+=A.dy,A.x-A.r<0||A.x+A.r>c.width&&(A.dx*=-1),A.y-A.r<0&&(A.y=A.r,q(A));let E=S(A);E&&q(A,E);if(A.y<c.height){v(),x.save(),x.beginPath(),x.arc(A.x,A.y,A.r,0,2*Math.PI),x.closePath(),x.clip(),m[A.type].complete?x.drawImage(m[A.type],A.x-A.r,A.y-A.r,2*A.r,2*A.r):(x.fillStyle=h[A.type],x.fill()),x.restore(),x.strokeStyle='#000',x.lineWidth=2,x.beginPath(),x.arc(A.x,A.y,A.r,0,2*Math.PI),x.stroke(),requestAnimationFrame(C)}}C()}
 function S(e){for(let l=g.length-1;l>=0;l--)for(let _=0;_<g[l].length;_++)if(g[l][_]){let j=g[l][_],A=e.x-j.x,C=e.y-j.y,E=Math.sqrt(A*A+C*C);if(E<e.r+j.r)return j}return null}
 function q(e,l=null){let _=0,j=0;if(l)for(let A=0;A<g.length;A++)for(let C=0;C<g[A].length;C++)if(g[A][C]===l){let E=A%2?0:1,T=[{r:A,c:C-1},{r:A,c:C+1},{r:A-1,c:C-1+E},{r:A-1,c:C+E},{r:A+1,c:C-1+E},{r:A+1,c:C+E}];for(let I of T)if(I.r>=0&&I.r<g.length&&I.c>=0&&I.c<g[I.r].length&&!g[I.r][I.c])return g[I.r][I.c]={type:e.type,x:2*I.c*b+(I.r%2)*b,y:1.8*I.r*b+2*b,r:b},z(I.r,I.c),t=!1,D(),v(),void 0}
@@ -46,11 +46,22 @@ j.length>=3&&(j.forEach(E=>{let T=g[E.row][E.col];f.push({x:T.x,y:T.y,r:T.r,type
 function E(){let T=!0;for(let I=f.length-1;I>=0;I--){let M=f[I];M.y+=M.dy,M.k+=M.ks,M.y<c.height+M.r?T=!1:f.splice(I,1)}v(),T||requestAnimationFrame(E)}())}
 function D(){u={type:n.type,x:c.width/2,y:c.height-2*b,r:b},n={type:Math.floor(4*Math.random()),x:c.width-3*b,y:c.height-2*b,r:b},v()}
 function L(){alert(`Game Over! Score: ${p}`),i(),p=0,s.textContent=`Score: ${p}`,t=!1}
-function B(E){let T=E.touches?E.touches[0].clientX:E.clientX,I=E.touches?E.touches[0].clientY:E.clientY,M=c.getBoundingClientRect(),F=T-M.left-c.width/2,R=c.height-b-(I-M.top);
-let angle = Math.atan2(R,F)*180/Math.PI;
-if (!isNaN(angle)) o = Math.max(10, Math.min(170, angle));
-a.style.left=T-30+'px',a.style.top=I-30+'px',a.style.display='block',v()}
-function P(E){E.touches&&E.preventDefault(),k(),a.style.display='none'}
+function B(E){let T = E.touches ? E.touches[0].clientX : E.clientX,
+               I = E.touches ? E.touches[0].clientY : E.clientY,
+               M = c.getBoundingClientRect(),
+               F = T - M.left - c.width / 2,
+               R = c.height - b - (I - M.top);
+  if (F === 0 && R === 0) return; // Avoid NaN angle
+  let angle = Math.atan2(R, F) * 180 / Math.PI;
+  if (!isNaN(angle)) {
+    o = Math.max(10, Math.min(170, angle));
+  }
+  a.style.left = T - 30 + 'px';
+  a.style.top = I - 30 + 'px';
+  a.style.display = 'block';
+  v();
+}
+function P(E){E.touches&&E.preventDefault();k();a.style.display='none'}
 c.addEventListener('mousemove',B),c.addEventListener('touchmove',B,{passive:!1}),c.addEventListener('click',P),c.addEventListener('touchend',P),c.addEventListener('mouseleave',()=>{a.style.display='none',v()}),i()})();
 </script>
 </body>
