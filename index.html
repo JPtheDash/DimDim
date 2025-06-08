@@ -1,571 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>10-Headed Ravana vs Raghupathi</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-        body {
-            background-color: #111;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-        }
-        #gameContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        #gameCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-        }
-        #healthBar {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 30%;
-            max-width: 200px;
-            height: 15px;
-            background-color: #333;
-            border: 1px solid #555;
-            z-index: 10;
-        }
-        #healthFill {
-            height: 100%;
-            width: 100%;
-            background-color: #f00;
-            transition: width 0.3s;
-        }
-        #score {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: white;
-            font-size: 14px;
-            z-index: 10;
-            text-shadow: 1px 1px 2px black;
-        }
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            display: none;
-            z-index: 20;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-        }
-        #gameOver button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #8B4513;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        #powerIndicator {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            max-width: 300px;
-            height: 10px;
-            background-color: #333;
-            border-radius: 5px;
-            display: none;
-            z-index: 10;
-        }
-        #powerFill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(to right, #00ff00, #ff0000);
-            border-radius: 5px;
-            transition: width 0.05s;
-        }
-        #directionLine {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.5);
-            height: 2px;
-            transform-origin: left center;
-            display: none;
-            z-index: 5;
-        }
-        @media (min-width: 768px) {
-            #gameOver {
-                font-size: 36px;
-            }
-            #score {
-                font-size: 20px;
-            }
-            #healthBar {
-                height: 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Demon Head Shooter</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0c0c0c;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #111;
+      border: 2px solid goldenrod;
+    }
+    h1 {
+      color: gold;
+      text-align: center;
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div id="gameContainer">
-        <div id="healthBar">
-            <div id="healthFill"></div>
-        </div>
-        <div id="score">Heads Remaining: 10</div>
-        <div id="gameOver">GAME OVER<br><button onclick="resetGame()">Play Again</button></div>
-        <div id="powerIndicator">
-            <div id="powerFill"></div>
-        </div>
-        <div id="directionLine"></div>
-        <canvas id="gameCanvas"></canvas>
-    </div>
+  <h1>🏹 Demon Head Shooter</h1>
+  <canvas id="gameCanvas" width="480" height="640"></canvas>
 
-    <script>
-        // Game setup
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const healthFill = document.getElementById('healthFill');
-        const scoreElement = document.getElementById('score');
-        const gameOverElement = document.getElementById('gameOver');
-        const powerIndicator = document.getElementById('powerIndicator');
-        const powerFill = document.getElementById('powerFill');
-        const directionLine = document.getElementById('directionLine');
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-        // Set canvas size to full screen
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // Adjust game elements based on screen size
-            gameState.bow.x = canvas.width * 0.1;
-            gameState.bow.y = canvas.height / 2;
-            
-            // Reinitialize heads when screen resizes
-            if (gameState.ravana.heads.length > 0) {
-                initHeads();
-            }
-        }
+    const bowImg = new Image();
+    bowImg.src = 'images/golden_bow.png'; // replace with your golden bow image
 
-        // Game state
-        const gameState = {
-            bow: {
-                x: 0,
-                y: 0,
-                width: 0,
-                height: 0,
-                health: 100,
-                arrows: [],
-                loadedArrow: null
-            },
-            ravana: {
-                heads: [],
-                fireballs: [],
-                headCount: 10,
-                fireRate: 2000 // milliseconds between fireballs
-            },
-            lastFireTime: 0,
-            gameActive: true,
-            headsDefeated: 0,
-            baseSizes: {
-                bowWidth: 40,
-                bowHeight: 80,
-                headRadius: 20,
-                arrowLength: 30,
-                fireballRadius: 10
-            },
-            aiming: {
-                isAiming: false,
-                startX: 0,
-                startY: 0,
-                power: 0,
-                maxPower: 100,
-                angle: 0
-            }
-        };
+    const demonImgs = [
+      'images/demon1.png',
+      'images/demon2.png',
+      'images/demon3.png'
+    ].map(src => {
+      const img = new Image();
+      img.src = src;
+      return img;
+    });
 
-        // Calculate scaled sizes based on screen dimensions
-        function getScaledSizes() {
-            const scaleFactor = Math.min(canvas.width / 800, canvas.height / 500);
-            
-            return {
-                bowWidth: gameState.baseSizes.bowWidth * scaleFactor,
-                bowHeight: gameState.baseSizes.bowHeight * scaleFactor,
-                headRadius: gameState.baseSizes.headRadius * scaleFactor,
-                arrowLength: gameState.baseSizes.arrowLength * scaleFactor,
-                fireballRadius: gameState.baseSizes.fireballRadius * scaleFactor
-            };
-        }
+    let shooterAngle = 0;
+    let currentDemon = demonImgs[Math.floor(Math.random() * demonImgs.length)];
+    let demons = [];
 
-        // Initialize Ravana's heads
-        function initHeads() {
-            gameState.ravana.heads = [];
-            const sizes = getScaledSizes();
-            
-            // Set bow dimensions
-            gameState.bow.width = sizes.bowWidth;
-            gameState.bow.height = sizes.bowHeight;
-            
-            const headSpacing = (canvas.width * 0.7) / (gameState.ravana.headCount - 1);
-            const startX = canvas.width * 0.3;
-            
-            for (let i = 0; i < gameState.ravana.headCount; i++) {
-                gameState.ravana.heads.push({
-                    x: startX + i * headSpacing,
-                    y: canvas.height * 0.15 + Math.random() * (canvas.height * 0.1),
-                    radius: sizes.headRadius,
-                    hits: 0,
-                    active: true
-                });
-            }
-        }
+    function drawShooter() {
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height - 40);
+      ctx.rotate(shooterAngle);
+      ctx.drawImage(bowImg, -25, -25, 50, 50);
+      ctx.restore();
+    }
 
-        // Draw bow
-        function drawBow() {
-            const sizes = getScaledSizes();
-            ctx.fillStyle = '#8B4513'; // Brown color for bow
-            ctx.fillRect(
-                gameState.bow.x, 
-                gameState.bow.y - sizes.bowHeight/2, 
-                sizes.bowWidth, 
-                sizes.bowHeight
-            );
-            
-            // Draw bow string
-            ctx.strokeStyle = '#FFF';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(
-                gameState.bow.x + sizes.bowWidth, 
-                gameState.bow.y - sizes.bowHeight/2 + sizes.bowHeight*0.2
-            );
-            ctx.lineTo(
-                gameState.bow.x + sizes.bowWidth, 
-                gameState.bow.y + sizes.bowHeight/2 - sizes.bowHeight*0.2
-            );
-            ctx.stroke();
-            
-            // Draw loaded arrow if aiming
-            if (gameState.aiming.isAiming && gameState.bow.loadedArrow) {
-                drawArrow(
-                    gameState.bow.loadedArrow.x, 
-                    gameState.bow.loadedArrow.y, 
-                    gameState.aiming.angle
-                );
-            }
-        }
+    function drawCurrentDemon() {
+      ctx.drawImage(currentDemon, canvas.width / 2 - 20, canvas.height - 80, 40, 40);
+    }
 
-        // Draw an arrow at position with rotation
-        function drawArrow(x, y, angle) {
-            const sizes = getScaledSizes();
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle);
-            
-            // Arrow shaft
-            ctx.fillStyle = '#CD853F';
-            ctx.fillRect(0, -2, sizes.arrowLength, 4);
-            
-            // Arrow head
-            ctx.beginPath();
-            ctx.moveTo(sizes.arrowLength, 0);
-            ctx.lineTo(sizes.arrowLength - 10, -5);
-            ctx.lineTo(sizes.arrowLength - 10, 5);
-            ctx.closePath();
-            ctx.fillStyle = '#B22222';
-            ctx.fill();
-            
-            // Arrow fletching
-            ctx.beginPath();
-            ctx.moveTo(0, -3);
-            ctx.lineTo(-8, -6);
-            ctx.lineTo(-8, 0);
-            ctx.closePath();
-            ctx.fillStyle = '#FFF';
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.moveTo(0, 3);
-            ctx.lineTo(-8, 6);
-            ctx.lineTo(-8, 0);
-            ctx.closePath();
-            ctx.fillStyle = '#FFF';
-            ctx.fill();
-            
-            ctx.restore();
-        }
+    function drawDemons() {
+      demons.forEach(d => {
+        ctx.drawImage(d.img, d.x, d.y, 40, 40);
+        d.y -= d.vy;
+      });
+    }
 
-        // Draw Ravana's heads
-        function drawHeads() {
-            gameState.ravana.heads.forEach(head => {
-                if (head.active) {
-                    ctx.fillStyle = '#FF0000'; // Red color for heads
-                    ctx.beginPath();
-                    ctx.arc(head.x, head.y, head.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw eyes
-                    ctx.fillStyle = '#FFF';
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x - head.radius*0.4, 
-                        head.y - head.radius*0.3, 
-                        head.radius*0.2, 
-                        0, 
-                        Math.PI * 2
-                    );
-                    ctx.arc(
-                        head.x + head.radius*0.4, 
-                        head.y - head.radius*0.3, 
-                        head.radius*0.2, 
-                        0, 
-                        Math.PI * 2
-                    );
-                    ctx.fill();
-                    
-                    // Draw mouth
-                    ctx.strokeStyle = '#FFF';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x, 
-                        head.y + head.radius*0.3, 
-                        head.radius*0.4, 
-                        0, 
-                        Math.PI
-                    );
-                    ctx.stroke();
-                }
-            });
-        }
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawShooter();
+      drawCurrentDemon();
+      drawDemons();
+      requestAnimationFrame(gameLoop);
+    }
 
-        // Draw arrows in flight
-        function drawArrows() {
-            gameState.bow.arrows.forEach(arrow => {
-                drawArrow(arrow.x, arrow.y, arrow.angle);
-            });
-        }
+    canvas.addEventListener('click', () => {
+      demons.push({
+        img: currentDemon,
+        x: canvas.width / 2 - 20,
+        y: canvas.height - 80,
+        vy: 3
+      });
+      currentDemon = demonImgs[Math.floor(Math.random() * demonImgs.length)];
+    });
 
-        // Draw fireballs
-        function drawFireballs() {
-            gameState.ravana.fireballs.forEach(fireball => {
-                const gradient = ctx.createRadialGradient(
-                    fireball.x, fireball.y, 0,
-                    fireball.x, fireball.y, fireball.radius
-                );
-                gradient.addColorStop(0, '#FF4500');
-                gradient.addColorStop(1, '#FF0000');
-                
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(fireball.x, fireball.y, fireball.radius, 0, Math.PI * 2);
-                ctx.fill();
-            });
-        }
-
-        // Shoot arrow from bow
-        function shootArrow() {
-            if (!gameState.gameActive || !gameState.bow.loadedArrow) return;
-            
-            const sizes = getScaledSizes();
-            const power = gameState.aiming.power / gameState.aiming.maxPower;
-            
-            gameState.bow.arrows.push({
-                x: gameState.bow.loadedArrow.x,
-                y: gameState.bow.loadedArrow.y,
-                angle: gameState.aiming.angle,
-                speedX: Math.cos(gameState.aiming.angle) * power * 15,
-                speedY: Math.sin(gameState.aiming.angle) * power * 15
-            });
-            
-            gameState.bow.loadedArrow = null;
-            powerIndicator.style.display = 'none';
-            directionLine.style.display = 'none';
-        }
-
-        // Update game state
-        function update() {
-            if (!gameState.gameActive) return;
-
-            const now = Date.now();
-            const sizes = getScaledSizes();
-            
-            // Randomly fire fireballs from active heads
-            if (now - gameState.lastFireTime > gameState.ravana.fireRate) {
-                gameState.lastFireTime = now;
-                const activeHeads = gameState.ravana.heads.filter(head => head.active);
-                if (activeHeads.length > 0) {
-                    const randomHead = activeHeads[Math.floor(Math.random() * activeHeads.length)];
-                    gameState.ravana.fireballs.push({
-                        x: randomHead.x,
-                        y: randomHead.y + sizes.headRadius,
-                        radius: sizes.fireballRadius,
-                        speedX: -3 * (canvas.width / 800),
-                        speedY: (gameState.bow.y - randomHead.y) / 100
-                    });
-                }
-            }
-            
-            // Update arrows in flight
-            gameState.bow.arrows = gameState.bow.arrows.filter(arrow => {
-                arrow.x += arrow.speedX;
-                arrow.y += arrow.speedY;
-                
-                // Apply gravity
-                arrow.speedY += 0.05;
-                
-                // Check for head hits
-                let hit = false;
-                gameState.ravana.heads.forEach(head => {
-                    if (head.active && !hit) {
-                        const dx = arrow.x - head.x;
-                        const dy = arrow.y - head.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < head.radius + sizes.arrowLength*0.5) {
-                            head.hits++;
-                            if (head.hits >= 3) {
-                                head.active = false;
-                                gameState.headsDefeated++;
-                                scoreElement.textContent = `Heads Remaining: ${gameState.ravana.headCount - gameState.headsDefeated}`;
-                                
-                                if (gameState.headsDefeated >= gameState.ravana.headCount) {
-                                    gameOver(false);
-                                }
-                            }
-                            hit = true;
-                        }
-                    }
-                });
-                
-                return !hit && arrow.x > 0 && arrow.x < canvas.width && 
-                       arrow.y > 0 && arrow.y < canvas.height;
-            });
-            
-            // Update fireballs
-            gameState.ravana.fireballs = gameState.ravana.fireballs.filter(fireball => {
-                fireball.x += fireball.speedX;
-                fireball.y += fireball.speedY;
-                
-                // Check for bow hit
-                if (fireball.x < gameState.bow.x + sizes.bowWidth && 
-                    fireball.x > gameState.bow.x &&
-                    fireball.y > gameState.bow.y - sizes.bowHeight/2 && 
-                    fireball.y < gameState.bow.y + sizes.bowHeight/2) {
-                    
-                    gameState.bow.health -= 10;
-                    healthFill.style.width = `${gameState.bow.health}%`;
-                    
-                    if (gameState.bow.health <= 0) {
-                        gameOver(true);
-                    }
-                    
-                    return false;
-                }
-                
-                return fireball.x > 0 && fireball.x < canvas.width && 
-                       fireball.y > 0 && fireball.y < canvas.height;
-            });
-            
-            // Update aiming power if dragging
-            if (gameState.aiming.isAiming) {
-                gameState.aiming.power = Math.min(
-                    gameState.aiming.maxPower,
-                    gameState.aiming.power + 2
-                );
-                powerFill.style.width = `${gameState.aiming.power}%`;
-            }
-        }
-
-        // Game over
-        function gameOver(lost) {
-            gameState.gameActive = false;
-            gameOverElement.style.display = 'block';
-            gameOverElement.textContent = lost ? 'YOU LOST!\nRavana Won!' : 'YOU WON!\nRaghupathi Defeated Ravana!';
-            gameOverElement.innerHTML += '<br><button onclick="resetGame()">Play Again</button>';
-        }
-
-        // Reset game
-        function resetGame() {
-            gameState.bow.health = 100;
-            gameState.bow.arrows = [];
-            gameState.bow.loadedArrow = null;
-            gameState.ravana.fireballs = [];
-            gameState.headsDefeated = 0;
-            gameState.gameActive = true;
-            gameState.aiming.isAiming = false;
-            healthFill.style.width = '100%';
-            scoreElement.textContent = `Heads Remaining: ${gameState.ravana.headCount}`;
-            gameOverElement.style.display = 'none';
-            powerIndicator.style.display = 'none';
-            directionLine.style.display = 'none';
-            initHeads();
-        }
-
-        // Main game loop
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            update();
-            drawBow();
-            drawHeads();
-            drawArrows();
-            drawFireballs();
-            
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Event listeners
-        function setupEventListeners() {
-            // Touch start (begin aiming)
-            canvas.addEventListener('touchstart', handleAimStart, { passive: false });
-            canvas.addEventListener('mousedown', handleAimStart);
-            
-            // Touch end (release arrow)
-            canvas.addEventListener('touchend', handleAimEnd, { passive: false });
-            canvas.addEventListener('mouseup', handleAimEnd);
-            
-            // Window resize
-            window.addEventListener('resize', () => {
-                resizeCanvas();
-            });
-        }
-        
-        function handleAimStart(e) {
-            if (!gameState.gameActive || gameState.bow.loadedArrow) return;
-            
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX || e.touches[0].clientX;
-            const clientY = e.clientY || e.touches[0].clientY;
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
-            
-            // Check if touch is near the bow
-            const sizes = getScaledSizes();
-            if (x > gameState.bow.x - 50 && x < gameState.bow.x + sizes.bowWidth + 50 &&
-                y > gameState.bow.y - sizes.bowHeight/2 - 50 && y < gameState.bow.y + sizes.bowHeight/2 + 50) {
-                
-                gameState.aiming.isAiming = true;
-                gameState.aiming.startX = x;
-                gameState.aiming.startY = y;
-                gameState.aiming.power = 0;
-                
-                // Position loaded arrow at bow
-                gameState.bow.loadedArrow = {
-             
+    gameLoop();
+  </script>
+</body>
+</html>
