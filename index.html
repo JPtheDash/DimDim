@@ -46,7 +46,10 @@ j.length>=3&&(j.forEach(E=>{let T=g[E.row][E.col];f.push({x:T.x,y:T.y,r:T.r,type
 function E(){let T=!0;for(let I=f.length-1;I>=0;I--){let M=f[I];M.y+=M.dy,M.k+=M.ks,M.y<c.height+M.r?T=!1:f.splice(I,1)}v(),T||requestAnimationFrame(E)}())}
 function D(){u={type:n.type,x:c.width/2,y:c.height-2*b,r:b},n={type:Math.floor(4*Math.random()),x:c.width-3*b,y:c.height-2*b,r:b},v()}
 function L(){alert(`Game Over! Score: ${p}`),i(),p=0,s.textContent=`Score: ${p}`,t=!1}
-function B(E){let T=E.touches?E.touches[0].clientX:E.clientX,I=E.touches?E.touches[0].clientY:E.clientY,M=c.getBoundingClientRect(),F=T-M.left-c.width/2,R=c.height-b-(I-M.top);o=Math.atan2(R,F)*180/Math.PI,o=Math.max(10,Math.min(170,o)),a.style.left=T-30+'px',a.style.top=I-30+'px',a.style.display='block',v()}
+function B(E){let T=E.touches?E.touches[0].clientX:E.clientX,I=E.touches?E.touches[0].clientY:E.clientY,M=c.getBoundingClientRect(),F=T-M.left-c.width/2,R=c.height-b-(I-M.top);
+let angle = Math.atan2(R,F)*180/Math.PI;
+if (!isNaN(angle)) o = Math.max(10, Math.min(170, angle));
+a.style.left=T-30+'px',a.style.top=I-30+'px',a.style.display='block',v()}
 function P(E){E.touches&&E.preventDefault(),k(),a.style.display='none'}
 c.addEventListener('mousemove',B),c.addEventListener('touchmove',B,{passive:!1}),c.addEventListener('click',P),c.addEventListener('touchend',P),c.addEventListener('mouseleave',()=>{a.style.display='none',v()}),i()})();
 </script>
