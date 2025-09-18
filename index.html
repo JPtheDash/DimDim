@@ -3,540 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRyte - Your One Stop Hospitality Solution</title>
+    <title>QRyte - Take a Tour</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 100px 20px;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 30px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #ff6b6b;
-            border: none;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            border: 2px solid white;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 80px 0;
-            text-align: center;
-            background-color: #f8f9fa;
-        }
-
-        .features-heading {
-            margin-bottom: 50px;
-        }
-
-        .circle-container {
-            position: relative;
-            width: 500px;
-            height: 500px;
-            margin: 0 auto;
-        }
-
-        .center-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .icon {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            font-size: 2rem;
-            color: #1a2a6c;
-            transition: all 0.3s ease;
-        }
-
-        .icon:hover {
-            transform: scale(1.1);
-            color: #b21f1f;
-        }
-
-        .icon-1 { top: 50px; left: 210px; }
-        .icon-2 { top: 150px; right: 50px; }
-        .icon-3 { bottom: 150px; right: 50px; }
-        .icon-4 { bottom: 50px; left: 210px; }
-        .icon-5 { top: 150px; left: 50px; }
-        .icon-6 { bottom: 150px; left: 50px; }
-
-        /* Testimonial Section */
-        .testimonial {
-            padding: 80px 0;
-            display: flex;
-            align-items: center;
-            background-color: white;
-        }
-
-        .testimonial-image {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .testimonial-image img {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .testimonial-content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .testimonial-content blockquote {
-            font-size: 1.5rem;
-            font-style: italic;
-            color: #555;
-            border-left: 5px solid #ff6b6b;
-            padding-left: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* QR Board Section */
-        .qr-board {
-            padding: 80px 0;
-            text-align: center;
-            background-color: #f8f9fa;
-        }
-
-        .qr-board-heading {
-            margin-bottom: 50px;
-        }
-
-        .qr-board-container {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 50px;
-        }
-
-        .qr-item {
-            text-align: center;
-            max-width: 250px;
-        }
-
-        .qr-icon {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 2.5rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Marquee Section */
-        .marquee {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            padding: 30px 0;
-            overflow: hidden;
-            color: white;
-        }
-
-        .marquee-content {
-            display: flex;
-            animation: marquee 15s linear infinite;
-            white-space: nowrap;
-        }
-
-        .marquee-text {
-            font-size: 2rem;
-            font-weight: bold;
-            padding: 0 20px;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* About Section */
-        .about {
-            padding: 80px 0;
-            background-color: white;
-        }
-
-        .about-heading {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-
-        .stat-item {
-            padding: 40px 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #1a2a6c;
-            margin-bottom: 10px;
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            color: white;
-        }
-
-        .contact-heading {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .contact-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-
-        .contact-info {
-            padding: 20px;
-        }
-
-        .contact-form {
-            padding: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .submit-btn {
-            background-color: white;
-            color: #1a2a6c;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: #ff6b6b;
-            color: white;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 30px 0;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .circle-container {
-                width: 400px;
-                height: 400px;
-            }
-            
-            .icon {
-                width: 70px;
-                height: 70px;
-                font-size: 1.5rem;
-            }
-            
-            .testimonial {
-                flex-direction: column;
-            }
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); color: #333; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { width: 100%; max-width: 800px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); overflow: hidden; }
+        header { background: linear-gradient(to right, #2c3e50, #4a6491); color: white; padding: 20px; text-align: center; }
+        .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .logo i { font-size: 36px; margin-right: 15px; color: #fdbb2d; }
+        .logo h1 { font-size: 36px; font-weight: 700; }
+        .page { display: none; padding: 30px; }
+        .active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn { padding: 12px 25px; background: linear-gradient(to right, #2c3e50, #4a6491); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; margin: 10px; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+        .btn-primary { background: linear-gradient(to right, #2c3e50, #4a6491); padding: 15px 40px; font-size: 18px; }
+        .btn-secondary { background: linear-gradient(to right, #6a11cb, #2575fc); }
+        .btn-success { background: linear-gradient(to right, #11998e, #38ef7d); }
+        .btn-danger { background: linear-gradient(to right, #ff512f, #dd2476); }
+        .center-content { text-align: center; padding: 40px 20px; }
+        .welcome-text { margin: 0 auto 40px; font-size: 18px; line-height: 1.6; }
+        .welcome-text h2 { color: #2c3e50; margin-bottom: 20px; font-size: 32px; }
+        .card-container { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .table-container { margin: 30px 0; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #2c3e50; font-weight: 600; }
+        .occupied { background-color: #ffebee; color: #f44336; font-weight: 600; padding: 5px 15px; border-radius: 20px; }
+        .vacant { background-color: #e8f5e9; color: #4caf50; font-weight: 600; padding: 5px 15px; border-radius: 20px; }
+        .room-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 30px 0; }
+        .room-card { background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); padding: 20px; width: 300px; text-align: center; }
+        .item-list { list-style: none; margin: 30px 0; }
+        .item-list li { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .item-name { font-size: 18px; font-weight: 500; }
+        .item-controls { display: flex; align-items: center; }
+        .item-quantity { margin: 0 15px; font-size: 18px; font-weight: 500; min-width: 30px; text-align: center; }
+        .quantity-btn { width: 35px; height: 35px; border-radius: 50%; border: none; background: #4a6491; color: white; font-size: 18px; cursor: pointer; }
+        .bill-container { background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); padding: 30px; margin: 30px auto; max-width: 600px; }
+        .bill-header { text-align: center; margin-bottom: 30px; color: #2c3e50; }
+        .bill-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
+        .bill-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; margin-top: 30px; padding-top: 15px; border-top: 2px solid #2c3e50; }
+        .bill-actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+        .back-btn { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.2); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; }
+        footer { text-align: center; padding: 20px; background: #f2f2f2; color: #666; font-size: 14px; }
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .circle-container {
-                width: 300px;
-                height: 300px;
-            }
-            
-            .center-logo {
-                width: 100px;
-                height: 100px;
-                font-size: 1rem;
-            }
-            
-            .icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.2rem;
-            }
-            
-            .qr-board-container {
-                flex-direction: column;
-                align-items: center;
-            }
+            .room-container, .card-container { flex-direction: column; align-items: center; }
+            .room-card { width: 100%; max-width: 350px; }
+            .bill-actions { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="logo">QRyte</div>
-            <p>Transforming Hospitality Experiences</p>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Your One Stop Hospitality Solution</h1>
-            <div class="buttons">
-                <button class="btn btn-primary">Book a Demo</button>
-                <button class="btn btn-secondary">Take a Tour</button>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-qrcode"></i>
+                <h1>QRyte</h1>
+            </div>
+            <p class="tagline">Smart Hospitality Management Solutions</p>
+        </header>
+        
+        <!-- Landing Page -->
+        <div id="landing-page" class="page active">
+            <div class="center-content">
+                <button class="btn btn-primary" onclick="showPage('tour-page')">
+                    <i class="fas fa-play-circle"></i> Take a Tour
+                </button>
             </div>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2 class="features-heading">Our Solutions</h2>
-            <div class="circle-container">
-                <div class="center-logo">QRyte</div>
-                <div class="icon icon-1"><i class="fas fa-qrcode"></i></div>
-                <div class="icon icon-2"><i class="fas fa-receipt"></i></div>
-                <div class="icon icon-3"><i class="fas fa-bed"></i></div>
-                <div class="icon icon-4"><i class="fas fa-utensils"></i></div>
-                <div class="icon icon-5"><i class="fas fa-handshake"></i></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonial Section -->
-    <section class="testimonial">
-        <div class="container">
-            <div class="testimonial-image">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Hotelier">
-            </div>
-            <div class="testimonial-content">
-                <blockquote>
-                    "QRyte have solved one of the biggest problem I had is managing multiple dashboards and order windows. The amazing thing is QRyte served more than just billing."
-                </blockquote>
-                <p><strong>John Smith</strong><br>Hotel Manager, Grand Plaza</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- QR Board Section -->
-    <section class="qr-board">
-        <div class="container">
-            <h2 class="qr-board-heading">QRyte QR Solutions</h2>
-            <div class="qr-board-container">
-                <div class="qr-item">
-                    <div class="qr-icon"><i class="fas fa-table"></i></div>
-                    <h3>Install on Table</h3>
-                    <p>Easy menu access for your customers with table QR codes</p>
+        
+        <!-- Tour Page -->
+        <div id="tour-page" class="page">
+            <button class="back-btn" onclick="showPage('landing-page')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="center-content">
+                <div class="welcome-text">
+                    <h2>Help Mr. Anand manage his hospitality business</h2>
+                    <p>As a multi-property hotelier, Mr. Anand needs to do everything right. With QRyte, he can efficiently manage his restaurants, rooms, and billing all from one platform.</p>
                 </div>
-                <div class="qr-item">
-                    <div class="qr-icon"><i class="fas fa-hotel"></i></div>
-                    <h3>Install in Room</h3>
-                    <p>Room service ordering made simple with QR technology</p>
-                </div>
-                <div class="qr-item">
-                    <div class="qr-icon"><i class="fas fa-cash-register"></i></div>
-                    <h3>Install on your Billing Desk</h3>
-                    <p>Streamline payments and billing processes</p>
+                
+                <div class="card-container">
+                    <button class="btn btn-secondary" onclick="showPage('manage-restro')">
+                        <i class="fas fa-utensils"></i> Manage Restro
+                    </button>
+                    
+                    <button class="btn btn-success" onclick="showPage('manage-room')">
+                        <i class="fas fa-bed"></i> Manage Room
+                    </button>
+                    
+                    <button class="btn btn-danger" onclick="showPage('manage-billing')">
+                        <i class="fas fa-receipt"></i> Manage Billing
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Marquee Section -->
-    <section class="marquee">
-        <div class="marquee-content">
-            <div class="marquee-text">Scan • Select • Savour</div>
-            <div class="marquee-text">Scan • Select • Savour</div>
-            <div class="marquee-text">Scan • Select • Savour</div>
-            <div class="marquee-text">Scan • Select • Savour</div>
+        
+        <!-- Manage Restro Page -->
+        <div id="manage-restro" class="page">
+            <button class="back-btn" onclick="showPage('tour-page')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="center-content">
+                <h2>Manage Restaurant</h2>
+                <p>View table status and generate bills for your restaurant</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Table Number</th>
+                                <th>Status</th>
+                                <th>Total Bill Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Table 1</td>
+                                <td><span class="occupied">Occupied</span></td>
+                                <td>₹1,850.00</td>
+                            </tr>
+                            <tr>
+                                <td>Table 2</td>
+                                <td><span class="vacant">Vacant</span></td>
+                                <td>₹0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Table 3</td>
+                                <td><span class="occupied">Occupied</span></td>
+                                <td>₹2,450.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="btn btn-primary">
+                    <i class="fas fa-file-invoice-dollar"></i> Generate Bill
+                </button>
+            </div>
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about">
-        <div class="container">
-            <h2 class="about-heading">About Us</h2>
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-text">Restaurants Served</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">One Stop</div>
-                    <div class="stat-text">Solution</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">4.7★</div>
-                    <div class="stat-text">Average Ratings</div>
+        
+        <!-- Manage Room Page -->
+        <div id="manage-room" class="page">
+            <button class="back-btn" onclick="showPage('tour-page')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="center-content">
+                <h2>Manage Rooms</h2>
+                <p>View room details and manage guest services</p>
+                
+                <div class="room-container">
+                    <div class="room-card">
+                        <h3>Deluxe Room #101</h3>
+                        <button class="btn btn-secondary">Booking Details</button>
+                        <button class="btn btn-success">Food Details</button>
+                        <button class="btn btn-danger">Generate Bill</button>
+                    </div>
+                    
+                    <div class="room-card">
+                        <h3>Suite Room #201</h3>
+                        <button class="btn btn-secondary">Booking Details</button>
+                        <button class="btn btn-success">Food Details</button>
+                        <button class="btn btn-danger">Generate Bill</button>
+                    </div>
+                    
+                    <div class="room-card">
+                        <h3>Standard Room #301</h3>
+                        <button class="btn btn-secondary">Booking Details</button>
+                        <button class="btn btn-success">Food Details</button>
+                        <button class="btn btn-danger">Generate Bill</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact">
-        <div class="container">
-            <h2 class="contact-heading">Contact Us</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Get in Touch</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> 123 Hospitality Ave, Restaurant District</p>
-                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                    <p><i class="fas fa-envelope"></i> info@qryte.com</p>
-                </div>
-                <div class="contact-form">
-                    <form>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" placeholder="Your Name">
+        
+        <!-- Manage Billing Page -->
+        <div id="manage-billing" class="page">
+            <button class="back-btn" onclick="showPage('tour-page')">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="center-content">
+                <h2>Manage Billing</h2>
+                <p>Add items and generate bills for your customers</p>
+                
+                <ul class="item-list">
+                    <li>
+                        <span class="item-name">Biryani</span>
+                        <div class="item-controls">
+                            <button class="quantity-btn" onclick="decrement('biryani')">-</button>
+                            <span class="item-quantity" id="biryani">0</span>
+                            <button class="quantity-btn" onclick="increment('biryani')">+</button>
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" placeholder="Your Email">
+                    </li>
+                    
+                    <li>
+                        <span class="item-name">Tandoori</span>
+                        <div class="item-controls">
+                            <button class="quantity-btn" onclick="decrement('tandoori')">-</button>
+                            <span class="item-quantity" id="tandoori">0</span>
+                            <button class="quantity-btn" onclick="increment('tandoori')">+</button>
                         </div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" rows="5" placeholder="Your Message"></textarea>
+                    </li>
+                    
+                    <li>
+                        <span class="item-name">Ice Cream</span>
+                        <div class="item-controls">
+                            <button class="quantity-btn" onclick="decrement('icecream')">-</button>
+                            <span class="item-quantity" id="icecream">0</span>
+                            <button class="quantity-btn" onclick="increment('icecream')">+</button>
                         </div>
-                        <button type="submit" class="submit-btn">Send Message</button>
-                    </form>
+                    </li>
+                </ul>
+                
+                <button class="btn btn-primary" onclick="generateBill()">
+                    <i class="fas fa-file-invoice-dollar"></i> Generate Bill
+                </button>
+                
+                <div id="bill-preview" class="bill-container" style="display: none;">
+                    <div class="bill-header">
+                        <h2>Bill Preview</h2>
+                        <p>Invoice #12345 | Date: 15 May 2023</p>
+                    </div>
+                    
+                    <div id="bill-items"></div>
+                    
+                    <div class="bill-total">
+                        <span>Total:</span>
+                        <span id="bill-total-amount">₹0.00</span>
+                    </div>
+                    
+                    <div class="bill-actions">
+                        <button class="btn btn-success">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+        
+        <footer>
+            <p>&copy; 2023 QRyte Hospitality Management System</p>
+        </footer>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 QRyte. All rights reserved.</p>
-        </div>
-    </footer>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        function increment(itemId) {
+            const quantityElement = document.getElementById(itemId);
+            let quantity = parseInt(quantityElement.textContent);
+            quantityElement.textContent = quantity + 1;
+        }
+        
+        function decrement(itemId) {
+            const quantityElement = document.getElementById(itemId);
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 0) {
+                quantityElement.textContent = quantity - 1;
+            }
+        }
+        
+        function generateBill() {
+            const items = [
+                { id: 'biryani', name: 'Biryani', price: 250 },
+                { id: 'tandoori', name: 'Tandoori', price: 350 },
+                { id: 'icecream', name: 'Ice Cream', price: 120 }
+            ];
+            
+            let totalAmount = 0;
+            let billItemsHTML = '';
+            
+            items.forEach(item => {
+                const quantity = parseInt(document.getElementById(item.id).textContent);
+                if (quantity > 0) {
+                    const itemTotal = quantity * item.price;
+                    totalAmount += itemTotal;
+                    
+                    billItemsHTML += `
+                        <div class="bill-item">
+                            <span>${item.name} (x${quantity})</span>
+                            <span>₹${itemTotal.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (totalAmount > 0) {
+                document.getElementById('bill-items').innerHTML = billItemsHTML;
+                document.getElementById('bill-total-amount').textContent = `₹${totalAmount.toFixed(2)}`;
+                document.getElementById('bill-preview').style.display = 'block';
+            } else {
+                alert('Please add at least one item to generate a bill.');
+            }
+        }
+    </script>
 </body>
 </html>
