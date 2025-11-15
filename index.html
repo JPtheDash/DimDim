@@ -1,314 +1,340 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRyte - Take a Tour</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); color: #333; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { width: 100%; max-width: 800px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); overflow: hidden; }
-        header { background: linear-gradient(to right, #2c3e50, #4a6491); color: white; padding: 20px; text-align: center; }
-        .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-        .logo i { font-size: 36px; margin-right: 15px; color: #fdbb2d; }
-        .logo h1 { font-size: 36px; font-weight: 700; }
-        .page { display: none; padding: 30px; }
-        .active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .btn { padding: 12px 25px; background: linear-gradient(to right, #2c3e50, #4a6491); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; margin: 10px; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
-        .btn-primary { background: linear-gradient(to right, #2c3e50, #4a6491); padding: 15px 40px; font-size: 18px; }
-        .btn-secondary { background: linear-gradient(to right, #6a11cb, #2575fc); }
-        .btn-success { background: linear-gradient(to right, #11998e, #38ef7d); }
-        .btn-danger { background: linear-gradient(to right, #ff512f, #dd2476); }
-        .center-content { text-align: center; padding: 40px 20px; }
-        .welcome-text { margin: 0 auto 40px; font-size: 18px; line-height: 1.6; }
-        .welcome-text h2 { color: #2c3e50; margin-bottom: 20px; font-size: 32px; }
-        .card-container { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
-        .table-container { margin: 30px 0; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f2f2f2; color: #2c3e50; font-weight: 600; }
-        .occupied { background-color: #ffebee; color: #f44336; font-weight: 600; padding: 5px 15px; border-radius: 20px; }
-        .vacant { background-color: #e8f5e9; color: #4caf50; font-weight: 600; padding: 5px 15px; border-radius: 20px; }
-        .room-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 30px 0; }
-        .room-card { background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); padding: 20px; width: 300px; text-align: center; }
-        .item-list { list-style: none; margin: 30px 0; }
-        .item-list li { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
-        .item-name { font-size: 18px; font-weight: 500; }
-        .item-controls { display: flex; align-items: center; }
-        .item-quantity { margin: 0 15px; font-size: 18px; font-weight: 500; min-width: 30px; text-align: center; }
-        .quantity-btn { width: 35px; height: 35px; border-radius: 50%; border: none; background: #4a6491; color: white; font-size: 18px; cursor: pointer; }
-        .bill-container { background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); padding: 30px; margin: 30px auto; max-width: 600px; }
-        .bill-header { text-align: center; margin-bottom: 30px; color: #2c3e50; }
-        .bill-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
-        .bill-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; margin-top: 30px; padding-top: 15px; border-top: 2px solid #2c3e50; }
-        .bill-actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
-        .back-btn { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.2); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; }
-        footer { text-align: center; padding: 20px; background: #f2f2f2; color: #666; font-size: 14px; }
-        @media (max-width: 768px) {
-            .room-container, .card-container { flex-direction: column; align-items: center; }
-            .room-card { width: 100%; max-width: 350px; }
-            .bill-actions { flex-direction: column; align-items: center; }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Damodara Ratna Mandir — Prototype</title>
+  <meta name="description" content="Prototype landing page for Damodara Ratna Mandir (DRM) — gemstones, certificates, contact." />
+  <style>
+    /* Reset + base */
+    :root{
+      --bg:#fbf7f0;
+      --text:#2b2220;
+      --accent1:#8b0000; /* deep maroon */
+      --accent2:#d6421b; /* red */
+      --accent3:#f0b63b; /* yellow/gold */
+      --card:#fff;
+      --muted:#6b5a52;
+      --gold:#b6862b;
+      --max-width:1100px;
+      --radius:12px;
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;background:var(--bg);color:var(--text);margin:0}
+    a{color:inherit}
+    .wrap{max-width:var(--max-width);margin:32px auto;padding:24px}/* Header / Logo */
+header{display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:18px}
+/* DRM wordmark (red -> yellow -> maroon mix) */
+.wordmark{
+  font-size:64px;line-height:1;font-weight:700;letter-spacing:1px;
+  background:linear-gradient(180deg,var(--accent2),var(--accent3) 55%,var(--accent1));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  text-transform:uppercase;font-family: Georgia, 'Times New Roman', serif;
+}
+.tag{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* Emblem: circular gems + Jagannath eyes SVG */
+.emblem{width:110px;height:110px;display:block}
+
+/* Navigation */
+nav{margin-left:auto}
+nav ul{display:flex;gap:18px;list-style:none;padding:0;margin:0}
+nav a{padding:8px 12px;border-radius:8px;font-size:14px}
+nav a.cta{background:linear-gradient(90deg,var(--accent2),var(--accent3));color:white}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1fr 420px;gap:28px;margin-top:28px;align-items:center}
+.hero .intro h1{font-size:40px;margin:0 0 10px}
+.hero .intro p{color:var(--muted);margin:0 0 18px}
+.actions{display:flex;gap:12px}
+.btn{padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+.btn.primary{background:linear-gradient(90deg,var(--accent2),var(--accent3));color:white}
+.btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+
+/* Simple product grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:26px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:0 6px 18px rgba(40,30,20,0.06);}
+.gem{height:120px;display:flex;align-items:center;justify-content:center}
+.gem svg{width:88%;height:auto}
+.card h3{margin:8px 0 6px;font-size:18px}
+.meta{color:var(--muted);font-size:13px}
+
+/* certificate badge */
+.badge{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;background:linear-gradient(90deg, rgba(182,134,43,0.12), rgba(182,134,43,0.04));border:1px solid rgba(182,134,43,0.12);font-weight:600;color:var(--gold)}
+
+/* Footer */
+footer{margin-top:36px;padding-top:18px;border-top:1px solid rgba(0,0,0,0.04);color:var(--muted);font-size:14px}
+
+/* Responsive */
+@media (max-width:840px){
+  .hero{grid-template-columns:1fr;}
+  .wordmark{font-size:48px}
+  header{gap:12px}
+}
+
+/* small decorative helpers to make gems look more faceted */
+.gem .facets{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2))}
+
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-qrcode"></i>
-                <h1>QRyte</h1>
-            </div>
-            <p class="tagline">Smart Hospitality Management Solutions</p>
-        </header>
-        
-        <!-- Landing Page -->
-        <div id="landing-page" class="page active">
-            <div class="center-content">
-                <button class="btn btn-primary" onclick="showPage('tour-page')">
-                    <i class="fas fa-play-circle"></i> Take a Tour
-                </button>
-            </div>
-        </div>
-        
-        <!-- Tour Page -->
-        <div id="tour-page" class="page">
-            <button class="back-btn" onclick="showPage('landing-page')">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="center-content">
-                <div class="welcome-text">
-                    <h2>Help Mr. Anand manage his hospitality business</h2>
-                    <p>As a multi-property hotelier, Mr. Anand needs to do everything right. With QRyte, he can efficiently manage his restaurants, rooms, and billing all from one platform.</p>
-                </div>
-                
-                <div class="card-container">
-                    <button class="btn btn-secondary" onclick="showPage('manage-restro')">
-                        <i class="fas fa-utensils"></i> Manage Restro
-                    </button>
-                    
-                    <button class="btn btn-success" onclick="showPage('manage-room')">
-                        <i class="fas fa-bed"></i> Manage Room
-                    </button>
-                    
-                    <button class="btn btn-danger" onclick="showPage('manage-billing')">
-                        <i class="fas fa-receipt"></i> Manage Billing
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Manage Restro Page -->
-        <div id="manage-restro" class="page">
-            <button class="back-btn" onclick="showPage('tour-page')">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="center-content">
-                <h2>Manage Restaurant</h2>
-                <p>View table status and generate bills for your restaurant</p>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Table Number</th>
-                                <th>Status</th>
-                                <th>Total Bill Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Table 1</td>
-                                <td><span class="occupied">Occupied</span></td>
-                                <td>₹1,850.00</td>
-                            </tr>
-                            <tr>
-                                <td>Table 2</td>
-                                <td><span class="vacant">Vacant</span></td>
-                                <td>₹0.00</td>
-                            </tr>
-                            <tr>
-                                <td>Table 3</td>
-                                <td><span class="occupied">Occupied</span></td>
-                                <td>₹2,450.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <button class="btn btn-primary">
-                    <i class="fas fa-file-invoice-dollar"></i> Generate Bill
-                </button>
-            </div>
-        </div>
-        
-        <!-- Manage Room Page -->
-        <div id="manage-room" class="page">
-            <button class="back-btn" onclick="showPage('tour-page')">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="center-content">
-                <h2>Manage Rooms</h2>
-                <p>View room details and manage guest services</p>
-                
-                <div class="room-container">
-                    <div class="room-card">
-                        <h3>Deluxe Room #101</h3>
-                        <button class="btn btn-secondary">Booking Details</button>
-                        <button class="btn btn-success">Food Details</button>
-                        <button class="btn btn-danger">Generate Bill</button>
-                    </div>
-                    
-                    <div class="room-card">
-                        <h3>Suite Room #201</h3>
-                        <button class="btn btn-secondary">Booking Details</button>
-                        <button class="btn btn-success">Food Details</button>
-                        <button class="btn btn-danger">Generate Bill</button>
-                    </div>
-                    
-                    <div class="room-card">
-                        <h3>Standard Room #301</h3>
-                        <button class="btn btn-secondary">Booking Details</button>
-                        <button class="btn btn-success">Food Details</button>
-                        <button class="btn btn-danger">Generate Bill</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Manage Billing Page -->
-        <div id="manage-billing" class="page">
-            <button class="back-btn" onclick="showPage('tour-page')">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="center-content">
-                <h2>Manage Billing</h2>
-                <p>Add items and generate bills for your customers</p>
-                
-                <ul class="item-list">
-                    <li>
-                        <span class="item-name">Biryani</span>
-                        <div class="item-controls">
-                            <button class="quantity-btn" onclick="decrement('biryani')">-</button>
-                            <span class="item-quantity" id="biryani">0</span>
-                            <button class="quantity-btn" onclick="increment('biryani')">+</button>
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <span class="item-name">Tandoori</span>
-                        <div class="item-controls">
-                            <button class="quantity-btn" onclick="decrement('tandoori')">-</button>
-                            <span class="item-quantity" id="tandoori">0</span>
-                            <button class="quantity-btn" onclick="increment('tandoori')">+</button>
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <span class="item-name">Ice Cream</span>
-                        <div class="item-controls">
-                            <button class="quantity-btn" onclick="decrement('icecream')">-</button>
-                            <span class="item-quantity" id="icecream">0</span>
-                            <button class="quantity-btn" onclick="increment('icecream')">+</button>
-                        </div>
-                    </li>
-                </ul>
-                
-                <button class="btn btn-primary" onclick="generateBill()">
-                    <i class="fas fa-file-invoice-dollar"></i> Generate Bill
-                </button>
-                
-                <div id="bill-preview" class="bill-container" style="display: none;">
-                    <div class="bill-header">
-                        <h2>Bill Preview</h2>
-                        <p>Invoice #12345 | Date: 15 May 2023</p>
-                    </div>
-                    
-                    <div id="bill-items"></div>
-                    
-                    <div class="bill-total">
-                        <span>Total:</span>
-                        <span id="bill-total-amount">₹0.00</span>
-                    </div>
-                    
-                    <div class="bill-actions">
-                        <button class="btn btn-success">
-                            <i class="fas fa-share-alt"></i> Share
-                        </button>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-print"></i> Print
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <footer>
-            <p>&copy; 2023 QRyte Hospitality Management System</p>
-        </footer>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <!-- Emblem SVG: 9 gems around central Jagannath eyes (simplified, non-offensive) -->
+        <svg class="emblem" viewBox="0 0 120 120" role="img" aria-label="Damodara Ratna Mandir emblem">
+          <defs>
+            <radialGradient id="gshine" cx="30%" cy="25%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"></stop>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
+            </radialGradient>
+            <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.25" />
+            </filter>
+          </defs><!-- positions for 9 gems (circle) -->
+      <!-- top (ruby) -->
+      <g class="facets">
+        <circle cx="60" cy="15" r="10" fill="#b61827" stroke="#8f131a" stroke-width="2" />
+        <circle cx="60" cy="15" r="10" fill="url(#gshine)" opacity="0.35" />
+
+        <!-- top-right (yellow sapphire) -->
+        <circle cx="92" cy="28" r="9.5" fill="#e4b221" stroke="#b58918" stroke-width="2" />
+        <circle cx="92" cy="28" r="9.5" fill="url(#gshine)" opacity="0.33" />
+
+        <!-- right (emerald) -->
+        <circle cx="102" cy="60" r="9.5" fill="#1f9b4a" stroke="#126b2d" stroke-width="2" />
+        <circle cx="102" cy="60" r="9.5" fill="url(#gshine)" opacity="0.25" />
+
+        <!-- bottom-right (hessonite - gomed) -->
+        <circle cx="92" cy="92" r="9.5" fill="#c04b2b" stroke="#8a2e18" stroke-width="2" />
+        <circle cx="92" cy="92" r="9.5" fill="url(#gshine)" opacity="0.25" />
+
+        <!-- bottom (emerald/green) -->
+        <circle cx="60" cy="105" r="10" fill="#0f7b4a" stroke="#0a5a36" stroke-width="2" />
+        <circle cx="60" cy="105" r="10" fill="url(#gshine)" opacity="0.28" />
+
+        <!-- bottom-left (pearl) -->
+        <circle cx="18" cy="92" r="9.5" fill="#f3efe9" stroke="#cdbfb6" stroke-width="2" />
+        <circle cx="18" cy="92" r="9.5" fill="url(#gshine)" opacity="0.18" />
+
+        <!-- left (sapphire indra) -->
+        <circle cx="8" cy="60" r="9.5" fill="#0d5ea6" stroke="#0b3e6f" stroke-width="2" />
+        <circle cx="8" cy="60" r="9.5" fill="url(#gshine)" opacity="0.28" />
+
+        <!-- top-left (chrysoberyl cat's eye - vaiduryam) -->
+        <circle cx="18" cy="28" r="9.5" fill="#b7a471" stroke="#8f7a3f" stroke-width="2" />
+        <circle cx="18" cy="28" r="9.5" fill="url(#gshine)" opacity="0.22" />
+
+        <!-- inner left/top (diamond) -->
+        <circle cx="60" cy="40" r="16" fill="#0a5f8f" stroke="#08394f" stroke-width="2" />
+        <!-- diamond represented as bright white/clear with facets below -->
+        <g transform="translate(46,26)">
+          <polygon points="14,0 28,12 14,24 0,12" fill="#dce6ea" opacity="0.12"></polygon>
+          <polygon points="14,0 28,12 14,24" fill="#ffffff" opacity="0.06"></polygon>
+        </g>
+
+        <!-- center: Jagannath eyes only (stylised, respectful, simple) -->
+        <g>
+          <circle cx="60" cy="60" r="18" fill="#0b0b0b" />
+          <circle cx="52.5" cy="57" r="6.6" fill="#fff" />
+          <circle cx="67.5" cy="57" r="6.6" fill="#fff" />
+          <circle cx="52.5" cy="57" r="2.6" fill="#000" />
+          <circle cx="67.5" cy="57" r="2.6" fill="#000" />
+          <!-- small tika mark -->
+          <path d="M60 45 Q61.5 50 60 54 Q58.5 50 60 45" fill="#c63a2e" />
+        </g>
+      </g>
+    </svg>
+
+    <div>
+      <div class="wordmark">DRM</div>
+      <div class="tag">Damodara Ratna Mandir — Certified Gemstones</div>
+    </div>
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#gems">Gems</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="cta" href="#gems">Shop</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="intro">
+      <h1>Authentic precious stones — trusted by tradition</h1>
+      <p>Damodara Ratna Mandir specialises in the nine traditional navaratna gemstones — tested, certified and set with care. Explore our curated collection with lab-backed reports.</p>
+      <div class="actions">
+        <button class="btn primary">Browse Gems</button>
+        <button class="btn ghost">View Certification Process</button>
+      </div>
+
+      <p style="margin-top:16px"><span class="badge">Lab Tested • Buy with Confidence</span></p>
     </div>
 
-    <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-        }
-        
-        function increment(itemId) {
-            const quantityElement = document.getElementById(itemId);
-            let quantity = parseInt(quantityElement.textContent);
-            quantityElement.textContent = quantity + 1;
-        }
-        
-        function decrement(itemId) {
-            const quantityElement = document.getElementById(itemId);
-            let quantity = parseInt(quantityElement.textContent);
-            if (quantity > 0) {
-                quantityElement.textContent = quantity - 1;
-            }
-        }
-        
-        function generateBill() {
-            const items = [
-                { id: 'biryani', name: 'Biryani', price: 250 },
-                { id: 'tandoori', name: 'Tandoori', price: 350 },
-                { id: 'icecream', name: 'Ice Cream', price: 120 }
-            ];
-            
-            let totalAmount = 0;
-            let billItemsHTML = '';
-            
-            items.forEach(item => {
-                const quantity = parseInt(document.getElementById(item.id).textContent);
-                if (quantity > 0) {
-                    const itemTotal = quantity * item.price;
-                    totalAmount += itemTotal;
-                    
-                    billItemsHTML += `
-                        <div class="bill-item">
-                            <span>${item.name} (x${quantity})</span>
-                            <span>₹${itemTotal.toFixed(2)}</span>
-                        </div>
-                    `;
-                }
-            });
-            
-            if (totalAmount > 0) {
-                document.getElementById('bill-items').innerHTML = billItemsHTML;
-                document.getElementById('bill-total-amount').textContent = `₹${totalAmount.toFixed(2)}`;
-                document.getElementById('bill-preview').style.display = 'block';
-            } else {
-                alert('Please add at least one item to generate a bill.');
-            }
-        }
-    </script>
+    <aside>
+      <div style="background:linear-gradient(180deg,rgba(182,134,43,0.06),rgba(0,0,0,0.02));padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.04);">
+        <h3 style="margin:0 0 8px">Quick Info</h3>
+        <p class="meta" style="margin:0">Business: Proprietorship • Udyam-ready • GST enabled</p>
+        <p class="meta" style="margin:6px 0 0">Location: Bhubaneswar / Cuttack region</p>
+        <p style="margin-top:12px"><strong>Top stone:</strong> Manikyam (Ruby)</p>
+      </div>
+    </aside>
+  </section>
+
+  <section id="gems">
+    <h2 style="margin-top:28px">Navaratna — Our Featured Stones</h2>
+    <div class="grid" aria-live="polite">
+      <!-- Card: Diamond -->
+      <article class="card">
+        <div class="gem">
+          <!-- realistic-ish gem SVG (diamond/clear) -->
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="dgrad" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="1" stop-color="#e6eef2"/></linearGradient>
+            </defs>
+            <g transform="translate(10,10)">
+              <polygon points="50,0 90,34 50,110 10,34" fill="url(#dgrad)" stroke="#c6d6dd" stroke-width="2" />
+            </g>
+          </svg>
+        </div>
+        <h3>Vajram — Diamond</h3>
+        <div class="meta">Brilliance report • Certificate available</div>
+      </article>
+
+      <!-- Ruby -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="rgrad"><stop offset="0" stop-color="#ff6b6b"/><stop offset="1" stop-color="#8b0b0b"/></radialGradient>
+            </defs>
+            <circle cx="60" cy="60" r="40" fill="url(#rgrad)" stroke="#6b0a0a" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Manikyam — Ruby</h3>
+        <div class="meta">Heat-treated / Natural notes • Certificate available</div>
+      </article>
+
+      <!-- Sapphire -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="sgrad"><stop offset="0" stop-color="#4da1d6"/><stop offset="1" stop-color="#083b66"/></radialGradient>
+            </defs>
+            <circle cx="60" cy="60" r="40" fill="url(#sgrad)" stroke="#073455" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Indraneelam — Sapphire</h3>
+        <div class="meta">Trusted Kashmir/Sri Lanka origins • Certificate available</div>
+      </article>
+
+      <!-- Yellow Sapphire -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="ygrad"><stop offset="0" stop-color="#ffefb3"/><stop offset="1" stop-color="#d19c1a"/></radialGradient></defs>
+            <circle cx="60" cy="60" r="40" fill="url(#ygrad)" stroke="#b88618" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Manjapushyaragam — Yellow Sapphire</h3>
+        <div class="meta">Yellow sapphire, clarity-graded • Certificate available</div>
+      </article>
+
+      <!-- Cat's Eye -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="cgrad" x1="0" x2="1"><stop offset="0" stop-color="#c7b982"/><stop offset="1" stop-color="#786432"/></linearGradient></defs>
+            <ellipse cx="60" cy="60" rx="40" ry="30" fill="url(#cgrad)" stroke="#6b5b3a" stroke-width="3" />
+            <rect x="10" y="54" width="100" height="12" rx="6" fill="#fff" opacity="0.12"/>
+          </svg>
+        </div>
+        <h3>Vaiduryam — Chrysoberyl Cat's Eye</h3>
+        <div class="meta">Sharp chatoyancy • Certificate available</div>
+      </article>
+
+      <!-- Emerald -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="egrad"><stop offset="0" stop-color="#8ee18b"/><stop offset="1" stop-color="#0a6b2f"/></radialGradient></defs>
+            <circle cx="60" cy="60" r="40" fill="url(#egrad)" stroke="#0a5b2a" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Marathakam — Emerald</h3>
+        <div class="meta">Colombian / Zambian origins noted • Certificate available</div>
+      </article>
+
+      <!-- Hessonite -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="hgrad"><stop offset="0" stop-color="#f1b797"/><stop offset="1" stop-color="#9b4f2a"/></radialGradient></defs>
+            <circle cx="60" cy="60" r="40" fill="url(#hgrad)" stroke="#8b4a2a" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Gomedakam — Hessonite Garnet</h3>
+        <div class="meta">Classic tonal range • Certificate available</div>
+      </article>
+
+      <!-- Pearl -->
+      <article class="card">
+        <div class="gem">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="pgrad"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d8d0c8"/></radialGradient></defs>
+            <circle cx="60" cy="60" r="36" fill="url(#pgrad)" stroke="#c6bfb6" stroke-width="3" />
+          </svg>
+        </div>
+        <h3>Muthu — Pearl</h3>
+        <div class="meta">Natural / Akoya / South Sea notes • Certificate available</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="contact" style="margin-top:28px">
+    <h2>Contact & Visit</h2>
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:12px">
+      <div style="background:var(--card);padding:16px;border-radius:12px;">
+        <p class="meta">For wholesale or certified purchases, call or message:</p>
+        <p style="margin:8px 0"><strong>Damodara Ratna Mandir</strong><br>Owner: JP Dash<br>Location: Bommanahalli, Bengaluru (Demo address)</p>
+        <p class="meta">Email: info@damodararcdn.example (demo)</p>
+        <p style="margin-top:8px"><strong>Opening hours:</strong> Mon–Sat 10:30 — 7:00</p>
+      </div>
+      <div style="background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);padding:16px;border-radius:12px;">
+        <h3 style="margin:0 0 8px">Request a Certificate</h3>
+        <p class="meta" style="margin:0 0 10px">Send a brief message — our certified gemologist will respond.</p>
+        <!-- non-functional contact form (prototype) -->
+        <form onsubmit="return false;" style="display:flex;flex-direction:column;gap:8px">
+          <input placeholder="Your name" style="padding:10px;border-radius:8px;border:1px solid #ddd" />
+          <input placeholder="Phone / Email" style="padding:10px;border-radius:8px;border:1px solid #ddd" />
+          <textarea placeholder="Message" rows="4" style="padding:10px;border-radius:8px;border:1px solid #ddd"></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn primary" style="flex:1">Send Request</button>
+            <button class="btn ghost" style="flex:1">Call Now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div>© Damodara Ratna Mandir — Prototype. All rights reserved.</div>
+      <div style="color:var(--muted);font-size:13px">Designed for quick prototype review • Static HTML/CSS</div>
+    </div>
+  </footer>
+
+</main>
+
+  </div>
 </body>
 </html>
