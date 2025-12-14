@@ -3,136 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerifyKaro - Land Verification</title>
+    <title>VerifyKaro | Land Verification</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Floating Label Logic */
+        .peer:placeholder-shown ~ .floating-label {
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #9CA3AF;
         }
-        /* smooth fade in for modal */
-        .modal-animate {
-            animation: fadeIn 0.3s ease-out;
+        .peer:focus ~ .floating-label,
+        .peer:not(:placeholder-shown) ~ .floating-label {
+            top: -0.6rem;
+            font-size: 0.75rem;
+            color: #2563EB;
+            background-color: white;
+            padding: 0 4px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+
+        /* Success Checkmark Animation */
+        .checkmark-circle {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
 
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+    <div class="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-10">
         
-        <div class="bg-blue-600 p-6 text-center">
-            <div class="inline-block bg-white p-3 rounded-full mb-3 shadow-md">
-                <i class="fa-solid fa-shield-halved text-blue-600 text-3xl"></i>
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-center text-white relative">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            
+            <div class="flex justify-center mb-4">
+                <div class="bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/30">
+                    <i class="ph-fill ph-shield-check text-4xl text-white"></i>
+                </div>
             </div>
-            <h1 class="text-3xl font-bold text-white tracking-wide">VerifyKaro</h1>
-            <p class="text-blue-100 mt-2 font-medium text-lg">"Verify Karo, befikar raho"</p>
+            <h1 class="text-3xl font-bold tracking-tight">VerifyKaro</h1>
+            <p class="text-blue-100 mt-2 text-sm uppercase tracking-widest font-medium opacity-90">Verify Karo, Befikar Raho</p>
         </div>
 
-        <div class="p-8">
-            <form id="verifyForm" onsubmit="handleVerify(event)">
+        <div class="p-8 space-y-6">
+            <form id="verifyForm" onsubmit="startVerification(event)">
                 
-                <div class="mb-5">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="plotNumber">
+                <div class="relative">
+                    <input type="text" id="plotNumber" class="peer w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-transparent transition-all" placeholder="Plot Number" required>
+                    <label for="plotNumber" class="floating-label absolute left-3 transition-all duration-200 pointer-events-none text-gray-500">
                         Land Plot Number
                     </label>
+                    <i class="ph ph-map-pin absolute right-4 top-4 text-gray-400"></i>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fa-solid fa-map-location-dot"></i>
-                        </span>
-                        <input class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" 
-                               id="plotNumber" type="text" placeholder="e.g. Plot No. 45/B" required>
+                        <select id="state" class="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white appearance-none" required>
+                            <option value="" disabled selected>State</option>
+                            <option>Karnataka</option>
+                            <option>Maharashtra</option>
+                            <option>Delhi</option>
+                            <option>Telangana</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-4 top-4 text-gray-400 pointer-events-none"></i>
+                    </div>
+
+                    <div class="relative">
+                        <input type="text" id="district" class="peer w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-transparent transition-all" placeholder="District" required>
+                        <label for="district" class="floating-label absolute left-3 transition-all duration-200 pointer-events-none text-gray-500">
+                            District
+                        </label>
                     </div>
                 </div>
 
-                <div class="mb-5">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="state">
-                        State
-                    </label>
-                    <div class="relative">
-                        <select class="w-full border border-gray-300 rounded-lg py-3 px-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition bg-white" 
-                                id="state" required>
-                            <option value="" disabled selected>Select State</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-8">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="district">
-                        District
-                    </label>
-                    <input class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" 
-                           id="district" type="text" placeholder="e.g. Bengaluru Urban" required>
-                </div>
-
-                <button type="submit" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-200">
-                    VERIFY
+                <button type="submit" id="btnVerify" class="group relative w-full bg-gray-900 hover:bg-black text-white font-semibold py-4 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center overflow-hidden">
+                    <span id="btnText" class="relative z-10">Verify Now</span>
+                    <div id="btnLoader" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    
+                    <div class="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:left-full transition-all duration-500"></div>
                 </button>
             </form>
+            
+            <p class="text-xs text-center text-gray-400 mt-4">
+                <i class="ph ph-lock-key mr-1"></i> 100% Secure & Confidential
+            </p>
         </div>
     </div>
 
-    <div id="successModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center modal-animate relative">
+    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 m-4 text-center shadow-2xl transform scale-90 transition-transform duration-300" id="modalContent">
             
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-check text-green-500 text-3xl"></i>
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-5 checkmark-circle">
+                <i class="ph-fill ph-check-circle text-5xl"></i>
             </div>
 
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Request Received!</h2>
-            
-            <p class="text-gray-600 mb-6">
-                We are on it! Your land will be verified in <span class="font-bold text-blue-600">3-5 days</span>.
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Request Submitted</h2>
+            <p class="text-gray-500 mb-6 leading-relaxed">
+                We are on it! <br> Your land verification report will be ready in <br>
+                <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">3 - 5 days</span>.
             </p>
 
-            <button onclick="closeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">
-                Close
+            <button onclick="closeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl transition-colors">
+                Okay, got it
             </button>
         </div>
     </div>
 
     <script>
-        function handleVerify(event) {
-            event.preventDefault(); // Prevent actual form submission refresh
+        function startVerification(e) {
+            e.preventDefault();
             
-            // Get values (you can use these to send to backend later)
-            const plot = document.getElementById('plotNumber').value;
-            const state = document.getElementById('state').value;
-            const district = document.getElementById('district').value;
+            const btn = document.getElementById('btnVerify');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
 
-            if(plot && state && district) {
-                // Show the modal
-                document.getElementById('successModal').classList.remove('hidden');
-            }
+            // 1. Loading State
+            btnText.classList.add('hidden');
+            btnLoader.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('cursor-not-allowed', 'opacity-80');
+
+            // 2. Simulate Network Request (1.5 seconds)
+            setTimeout(() => {
+                showModal();
+                
+                // Reset Button
+                btnText.classList.remove('hidden');
+                btnLoader.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('cursor-not-allowed', 'opacity-80');
+            }, 1500);
+        }
+
+        function showModal() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before changing opacity for transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
         }
 
         function closeModal() {
-            // Hide the modal
-            document.getElementById('successModal').classList.add('hidden');
-            // Optional: Reset form
-            document.getElementById('verifyForm').reset();
-        }
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('modalContent');
 
-        // Close modal if clicking outside the white box
-        document.getElementById('successModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('verifyForm').reset();
+            }, 300);
+        }
     </script>
 </body>
 </html>
